@@ -5,21 +5,38 @@
 
 #define MUL2(a) (a<<1)^(a & 0x80 ? 0x1b : 0)
 #define MUL3(a) (MUL2(a))^(a)
-#define MUL4(a) (MUL2((MUL2(A))))
+#define MUL4(a) (MUL2((MUL2(a))))
 #define MUL8(a) MUL2((MUL2((MUL2(a)))))
-#define MUL9(a)
-#define MULB(a)
-#define MULD(a)
-#define MULE(a)
+#define MUL9(a) (MUL8(a))^(a)
+#define MULB(a) (MUL8(a))^(MUL2(a))^(a)
+#define MULD(a) (MUL8(a))^(MUL4(a))^(a)
+#define MULE(a) (MUL8(a))^(MUL4(a))^(MUL2(a))
+
+u8 MUL(u8 a, u8 b)
+{
+    u8 r = 0;
+    u8 tmp = b;
+    u32 i;
+    for (i = 0; i < 8 ; i++)
+    {
+        if (a % 2)r ^= tmp;
+        tmp = MUL2(tmp);
+        a >>= 1; // (a=a>>1)
+    }
+
+    return r;
+}
 
 int main()
 {
-    u8 a, b;
+    u8 a, b, c;
 
     a = 0xab;
-    b = MUL2(a);
+    b = 0x38;
+    c = MUL(a, b);
 
-    printf("MUL2(%02x)=%02x\n", a, b);
+    //printf("MULE(%02x)=%02x\n", a, b);
+    printf("%02x * %02x = %02x\n", a, b, c);
 
     return 0;
 }
