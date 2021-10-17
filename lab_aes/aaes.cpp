@@ -159,13 +159,13 @@ inline void keyexpansion(int k[16])
     k[0] ^= rcon[AES_NOWROUND];
 
     // 나머지 연산 
-    for(int i = 0 ; i < 3 ; i++)
-    k[i + 1] = orikey[i + 1]^k[i];
-
-    /*for(int i = 0 ; i < 16 ; i++)
+    for(int i = 0 ; i < 16 ; i++)
     {
-        k[i + 1] = orikey[i + 1]^key[i];
-    }*/
+        if((i + 1) % 4 == 0)    continue;
+        else    k[i + 1] = orikey[i + 1]^k[i];
+    }
+
+    /*
 
     k[1] = orikey[1]^k[0];
     k[2] = orikey[2]^k[1];
@@ -182,7 +182,7 @@ inline void keyexpansion(int k[16])
     k[13] = orikey[13]^k[12];
     k[14] = orikey[14]^k[13];
     k[15] = orikey[15]^k[14];
-
+    */
 }
 
 
