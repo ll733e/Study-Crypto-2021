@@ -4,6 +4,7 @@
         "string": "cpp",
         "ios": "cpp",
         "atomic": "cpp",
-        "cstdint": "cpp"
+        "cstdint": "cpp",
+        "iostream": "cpp"
     }
 }

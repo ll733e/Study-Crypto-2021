@@ -2,6 +2,9 @@
 #include <string>
 using namespace std;
 
+int AES_ALLROUND = 3;
+int AES_NOWROUND = 0;
+
 int mul2(int x)
 {
     x <<= 1;
@@ -152,17 +155,33 @@ inline void keyexpansion(int k[16])
     // SubWord
     for(int sub = 1 ; sub < 5 ; sub++)
     {
-    k[4 * sub - 4] = sbox[k[4 * sub - 4]];
-    k[4 * sub - 4] ^= orikey[4 * sub - 4]^rcon[0];
+        k[4 * sub - 4] = sbox[k[4 * sub - 4]];  
+        k[4 * sub - 4] ^= orikey[4 * sub - 4];
     }
-    //for(int index = 1 ; index < 5 ; index++)
+    // Rcon 추가
+    k[0] ^= rcon[AES_NOWROUND - 1];
     
+    // 나머지 연산 
+    
+    for(int i = 0 ; i < 3 ; i++)
+    k[i + 1] = orikey[i + 1]^k[i];
+
+    k[5] = orikey[5]^k[4];
+    k[6] = orikey[6]^k[5];
+    k[7] = orikey[7]^k[6];
+
+    k[9] = orikey[9]^k[8];
+    k[10] = orikey[10]^k[9];
+    k[11] = orikey[11]&k[10];
+    
+    k[13] = orikey[13]^k[12];
+    k[14] = orikey[14]^k[13];
+    k[15] = orikey[15]^k[14];
     
 
 }
 
-int AES_ALLROUND = 1;
-int AES_NOWROUND = 0;
+
 // AES, Key size - 128bit;
 int main() 
 {
@@ -186,9 +205,9 @@ int main()
     0x6e, 0x6f, 0x61, 0x03,
     0x74, 0x6b, 0x6c, 0x03
     };
-    
-    /*
-    for(int state_num = 0 ; state_num < 2 ; state_num++)
+
+
+    for(int state_num = 0 ; state_num < 1 ; state_num++)
     {
         cout << state_num+1 << "번째 State" << endl;
         prt(state[state_num]);
@@ -197,29 +216,31 @@ int main()
     cout << "[" << AES_NOWROUND << "Round] AddRoundKey" << endl;
     addroundkey(state[0], key);
     prt(state[0]);
-    */
-    cout << "[" << AES_NOWROUND << "Round] Key" << endl;
-    prt(key);
 
-    cout << "[1Round] KeySchedule" << endl;
-    keyexpansion(key);
-    prt(key);
-    /*
-    for(AES_NOWROUND = 1 ; Round < AES_ALLROUND ; AES_NOWROUND++)
+    for(AES_NOWROUND = 1 ; AES_NOWROUND < AES_ALLROUND ; AES_NOWROUND++)
     {
-        cout << "[" << AES_NOWROUND << "Round] SubByte" << endl;
+        cout << "[" << dec << AES_NOWROUND << "Round] Key Schedule" << endl;
+        keyexpansion(key);
+        prt(key);
+/*
+        cout << "[" << dec << AES_NOWROUND << "Round] SubByte" << endl;
         subbyte(state[0]);
         prt(state[0]);
         
-        cout << "[" << AES_NOWROUND << "Round] ShiftRows" << endl;
+        cout << "[" << dec << AES_NOWROUND << "Round] ShiftRows" << endl;
         shiftrows(state[0]);
         prt(state[0]);
 
-        cout << "[" << AES_NOWROUND << "Round] MixColumns" << endl;
+        cout << "[" << dec << AES_NOWROUND << "Round] MixColumns" << endl;
         mixcolumns(state[0]);
         prt(state[0]);
+
+        cout << "[" << dec << AES_NOWROUND << "Round] AddRoundKey" << endl;
+        addroundkey(state[0], key);
+        prt(state[0]);
+        */
+
     }
-    */
 
 }
 
