@@ -1,6 +1,9 @@
 {
     "files.associations": {
         "iosfwd": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "ios": "cpp",
+        "atomic": "cpp",
+        "cstdint": "cpp"
     }
 }
