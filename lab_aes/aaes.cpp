@@ -166,7 +166,6 @@ inline void keyexpansion(int k[16])
     }
 
     /*
-
     k[1] = orikey[1]^k[0];
     k[2] = orikey[2]^k[1];
     k[3] = orikey[3]^k[2];
