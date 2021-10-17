@@ -2,7 +2,7 @@
 #include <string>
 using namespace std;
 
-int AES_ALLROUND = 3;
+int AES_ALLROUND = 8;
 int AES_NOWROUND = 0;
 
 int mul2(int x)
@@ -137,34 +137,39 @@ inline void keyexpansion(int k[16])
     0x20, 0x40, 0x80, 0x1B, 0x36,
     0x6C, 0xD8, 0xA8, 0xAB
     };
+    int w[4];
     int orikey[16];
     for(int i = 0 ; i < 16 ; i++)
     orikey[i] = k[i];
 
-    // W(i-1) -> Wi로 변경
-    for(int n = 1 ; n < 5 ; n++)
-    k[4 * n - 4] = k[4 * n - 1];
+    // w에 RotWord 저장
+    for(int i = 2 ; i < 5 ; i++)
+    w[i - 2] = k[4 * i - 1];
+    w[3] = k[3];
     
-    // RotWord
-    int temp;
-    temp = k[0];
-    for(int shift = 0 ; shift < 3 ; shift++)
-    k[4 * shift - 4] = k[4 * shift];
-    k[12] = temp;
-    
-    // SubWord
-    for(int sub = 1 ; sub < 5 ; sub++)
-    {
-        k[4 * sub - 4] = sbox[k[4 * sub - 4]];  
-        k[4 * sub - 4] ^= orikey[4 * sub - 4];
-    }
-    // Rcon 추가
-    k[0] ^= rcon[AES_NOWROUND - 1];
-    
+    // w에 SubWord 저장
+    for(int s = 0 ; s < 4 ; s++)
+    w[s] = sbox[w[s]];
+
+    // W[i-4], W[i] XOR
+    for(int index = 0 ; index < 4 ; index++)
+    k[4 * index] = orikey[4 * index]^w[index];
+
+    // RCON 적용
+    k[0] ^= rcon[AES_NOWROUND];
+
     // 나머지 연산 
-    
     for(int i = 0 ; i < 3 ; i++)
     k[i + 1] = orikey[i + 1]^k[i];
+
+    /*for(int i = 0 ; i < 16 ; i++)
+    {
+        k[i + 1] = orikey[i + 1]^key[i];
+    }*/
+
+    k[1] = orikey[1]^k[0];
+    k[2] = orikey[2]^k[1];
+    k[3] = orikey[3]^k[2];
 
     k[5] = orikey[5]^k[4];
     k[6] = orikey[6]^k[5];
@@ -172,12 +177,11 @@ inline void keyexpansion(int k[16])
 
     k[9] = orikey[9]^k[8];
     k[10] = orikey[10]^k[9];
-    k[11] = orikey[11]&k[10];
+    k[11] = orikey[11]^k[10];
     
     k[13] = orikey[13]^k[12];
     k[14] = orikey[14]^k[13];
     k[15] = orikey[15]^k[14];
-    
 
 }
 
@@ -206,6 +210,8 @@ int main()
     0x74, 0x6b, 0x6c, 0x03
     };
 
+    keyexpansion(key);
+    prt(key);
 
     for(int state_num = 0 ; state_num < 1 ; state_num++)
     {
@@ -219,10 +225,10 @@ int main()
 
     for(AES_NOWROUND = 1 ; AES_NOWROUND < AES_ALLROUND ; AES_NOWROUND++)
     {
-        cout << "[" << dec << AES_NOWROUND << "Round] Key Schedule" << endl;
+        cout << "[" << dec << 1 + AES_NOWROUND << "Round] Key Schedule" << endl;
         keyexpansion(key);
         prt(key);
-/*
+    /*
         cout << "[" << dec << AES_NOWROUND << "Round] SubByte" << endl;
         subbyte(state[0]);
         prt(state[0]);
@@ -238,9 +244,9 @@ int main()
         cout << "[" << dec << AES_NOWROUND << "Round] AddRoundKey" << endl;
         addroundkey(state[0], key);
         prt(state[0]);
-        */
 
+*/
     }
 
-}
+} 
 
