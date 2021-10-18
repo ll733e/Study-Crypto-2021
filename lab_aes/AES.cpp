@@ -181,7 +181,6 @@ inline void prts(int a[16])
         cout.fill('0');
         cout << hex << uppercase << a[i + 12];
     }
-    cout << endl;
 }
 
 // AES, Key size - 128bit;
@@ -208,6 +207,8 @@ int main()
     0x74, 0x6b, 0x6c, 0x03
     };
 
+    FILE *fp = fopen("plaintext.txt", "w");
+
     int size;
     cout << "128, 192, 256 >> ";
     cin >> size;
@@ -216,6 +217,14 @@ int main()
     else if(size == 256) AES_ALLROUND = 14;
     else return 0;
 
+    cout << "Plaintext : ";
+    for(int i = 0 ; i < 2 ; i++)
+    prts(state[i]);
+    cout << endl;
+    cout << "Key : ";
+    prts(key);
+    cout << endl;
+    cout << "Ciphertext : ";
     int S_INDEX = 0;
     for(S_INDEX = 0 ; S_INDEX < 2 ; S_INDEX++)
     {
@@ -232,8 +241,10 @@ int main()
     subbyte(state[S_INDEX]);
     shiftrows(state[S_INDEX]);
     addroundkey(state[S_INDEX], key);
-
+ 
     prts(state[S_INDEX]);
     }
+    cout << endl;
 } 
+
 
