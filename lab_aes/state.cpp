@@ -8,8 +8,5 @@ int main()
     string a;
     cin >> a;
     state_num = a.length() / 16;
-    
     int *state = new int[16];
-    
-    
 }

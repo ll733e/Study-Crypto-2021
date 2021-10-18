@@ -164,6 +164,26 @@ inline void keyexpansion(int k[16])
     }
 }
 
+inline void prts(int a[16])
+{
+    for(int i = 0 ; i < 4 ; i++)
+    {
+        cout.width(2);
+        cout.fill('0');
+        cout << hex << uppercase << a[i + 0];
+        cout.width(2);
+        cout.fill('0');
+        cout << hex << uppercase << a[i + 4];
+        cout.width(2);
+        cout.fill('0');
+        cout << hex << uppercase << a[i + 8];
+        cout.width(2);
+        cout.fill('0');
+        cout << hex << uppercase << a[i + 12];
+    }
+    cout << endl;
+}
+
 // AES, Key size - 128bit;
 int main() 
 {
@@ -196,48 +216,24 @@ int main()
     else if(size == 256) AES_ALLROUND = 14;
     else return 0;
 
-    cout << "[" << AES_NOWROUND << "Round] AddRoundKey" << endl;
-    addroundkey(state[0], key);
-    prt(state[0]);
-
+    int S_INDEX = 0;
+    for(S_INDEX = 0 ; S_INDEX < 2 ; S_INDEX++)
+    {
+    addroundkey(state[S_INDEX], key);
     for(AES_NOWROUND = 1 ; AES_NOWROUND < AES_ALLROUND  ; AES_NOWROUND++)
     {   
-        cout << "[" << dec << AES_NOWROUND << "Round] Key Schedule" << endl;
         keyexpansion(key);
-        prt(key); 
-
-        cout << "[" << dec << AES_NOWROUND << "Round] SubByte" << endl;
-        subbyte(state[0]);
-        prt(state[0]);
-        
-        cout << "[" << dec << AES_NOWROUND << "Round] ShiftRows" << endl;
-        shiftrows(state[0]);
-        prt(state[0]);
-
-        cout << "[" << dec << AES_NOWROUND << "Round] MixColumns" << endl;
-        mixcolumns(state[0]);
-        prt(state[0]);
-
-        cout << "[" << dec << AES_NOWROUND << "Round] AddRoundKey" << endl;
-        addroundkey(state[0], key);
-        prt(state[0]);
+        subbyte(state[S_INDEX]);
+        shiftrows(state[S_INDEX]);
+        mixcolumns(state[S_INDEX]);
+        addroundkey(state[S_INDEX], key);
     }
+    keyexpansion(key);
+    subbyte(state[S_INDEX]);
+    shiftrows(state[S_INDEX]);
+    addroundkey(state[S_INDEX], key);
 
-        cout << "[" << dec << AES_ALLROUND << "Round] Key Schedule" << endl;
-        keyexpansion(key);
-        prt(key); 
-
-        cout << "[" << dec << AES_ALLROUND << "Round] SubByte" << endl;
-        subbyte(state[0]);
-        prt(state[0]);
-        
-        cout << "[" << dec << AES_ALLROUND << "Round] ShiftRows" << endl;
-        shiftrows(state[0]);
-        prt(state[0]);
-
-        cout << "[" << dec << AES_ALLROUND << "Round] AddRoundKey" << endl;
-        addroundkey(state[0], key);
-        prt(state[0]);
-        
+    prts(state[S_INDEX]);
+    }
 } 
 
