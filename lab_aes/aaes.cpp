@@ -68,6 +68,11 @@ inline void subbyte(int s[16])
     for(int index = 0 ; index < 16 ; index++)
     s[index] = sbox[s[index]];
 }
+inline void invshiftrows(int s[16])
+{
+    int bak[2];
+    
+}
 inline void shiftrows(int s[16])
 {
     int bak[2];
@@ -164,6 +169,7 @@ inline void keyexpansion(int k[16])
     }
 }
 
+
 // AES, Key size - 128bit;
 int main() 
 {
@@ -173,7 +179,7 @@ int main()
     0x6f, 0x74, 0x68, 0x61,
     0x6d, 0x65, 0x61, 0x70,
     0x61, 0x72, 0x74, 0x70
-    }, 
+    },
     {
     0x65, 0x0D, 0x0D, 0x0D,
     0x6e, 0x0D, 0x0D, 0x0D,
@@ -196,6 +202,7 @@ int main()
     else if(size == 256) AES_ALLROUND = 14;
     else return 0;
 
+    
     cout << "[" << AES_NOWROUND << "Round] AddRoundKey" << endl;
     addroundkey(state[0], key);
     prt(state[0]);
@@ -238,6 +245,8 @@ int main()
         cout << "[" << dec << AES_ALLROUND << "Round] AddRoundKey" << endl;
         addroundkey(state[0], key);
         prt(state[0]);
+        
+
         
 } 
 

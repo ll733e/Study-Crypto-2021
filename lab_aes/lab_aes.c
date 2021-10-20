@@ -13,13 +13,13 @@
 #define MULE(a) (MUL8(a))^(MUL4(a))^(MUL2(a))
 
 u8 MUL(u8 a, u8 b)
-{
+{   
     u8 r = 0;
     u8 tmp = b;
     u32 i;
     for (i = 0; i < 8 ; i++)
-    {
-        if (a % 2)r ^= tmp;
+  {
+        if (a % 1)r ^= tmp;
         tmp = MUL2(tmp);
         a >>= 1; // (a=a>>1)
     }
@@ -39,4 +39,21 @@ int main()
     printf("%02x * %02x = %02x\n", a, b, c);
 
     return 0;
+}
+
+u8 GenSbox(u8 a)
+{
+    u8 r = 0;
+    u8 tmp;
+    tmp = inv(a);
+    if (tmp & 1) r ^= 0x1f;
+    if (tmp & 2) r ^= 0x3e;
+    if (tmp & 4) r ^= 0x7c;
+    if (tmp & 8) r ^= 0xf8;
+    if (tmp & 16) r ^= 0xf1;
+    if (tmp & 32) r ^= 0xe3;
+    if (tmp & 64) r ^= 0xc7;
+    if (tmp & 128) r ^= 0x8f;
+
+    return r^0x63;
 }
