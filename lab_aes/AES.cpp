@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <time.h>
+
 using namespace std;
 int AES_ALLROUND = 10;
 int AES_NOWROUND = 0;
@@ -89,7 +91,7 @@ inline void subbyte(int s[16])
 inline void shiftrows(int s[16])
 {
     int bak[2];
-    
+     
     bak[0] = s[4 + 0];              // 2번째줄 1 Shift
     for(int i = 0 ; i < 3 ; i++)
     s[4 + i] = s[5 + i];
@@ -97,7 +99,7 @@ inline void shiftrows(int s[16])
 
     for(int i = 0 ; i < 4 ; i++)    // 3번째줄 2 Shift 최적화
     {   if(i < 2)
-        {
+        {   
             bak[i] = s[8 + i];
             s[8 + i] = s[10 + i];
         }
@@ -108,7 +110,6 @@ inline void shiftrows(int s[16])
     for(int i = 0 ; i < 4 ; i++)
     s[15 - i] = s[14 - i];
     s[12] = bak[0];
-    
 
     /*
     bak[0] = s[8 + 0];             // 3번째줄 2 shift
@@ -232,6 +233,7 @@ int main()
     else if(size == 192) AES_ALLROUND = 12;
     else if(size == 256) AES_ALLROUND = 14;
     else return 0;
+
     cout << "Plaintext : ";
     for(int i = 0 ; i < 2 ; i++)
     prts(state[i]);
@@ -240,6 +242,11 @@ int main()
     prts(key);
     cout << endl;
     cout << "Ciphertext : ";
+
+    clock_t start, end;
+    double result;
+
+    start = clock();
     int S_INDEX = 0;
     for(S_INDEX = 0 ; S_INDEX < 2 ; S_INDEX++)
     {
@@ -256,10 +263,14 @@ int main()
     subbyte(state[S_INDEX]);
     shiftrows(state[S_INDEX]);
     addroundkey(state[S_INDEX], key);
+    
+    end = clock();
+    result = (double)(end - start);
  
     prts(state[S_INDEX]);
     }
     cout << endl;
+    cout << "elapse time : " << result << "" << endl;
 } 
 
 
