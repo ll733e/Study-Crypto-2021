@@ -207,10 +207,10 @@ int main()
 {
     int state[2][16] = {
     {
-    0x6e, 0x74, 0x77, 0x68,
-    0x6f, 0x74, 0x68, 0x61,
-    0x6d, 0x65, 0x61, 0x70,
-    0x61, 0x72, 0x74, 0x70
+    0x00, 0x44, 0x88, 0xcc,
+    0x11, 0x55, 0x99, 0xdd,
+    0x22, 0x66, 0xaa, 0xee,
+    0x33, 0x77, 0xbb, 0xff
     }, 
     {
     0x65, 0x0D, 0x0D, 0x0D,
@@ -220,10 +220,10 @@ int main()
     }
     };
     int key[16] = {
-    0x64, 0x6C, 0x73, 0x6c,
-    0x6f, 0x6f, 0x6d, 0x03,
-    0x6e, 0x6f, 0x61, 0x03,
-    0x74, 0x6b, 0x6c, 0x03
+    0x01, 0x89, 0x12, 0x9a,
+    0x23, 0xab, 0x34, 0xbc,
+    0x45, 0xcd, 0x56, 0xde,
+    0x67, 0xef, 0x78, 0xf0
     };
 
     int size;
@@ -233,22 +233,21 @@ int main()
     else if(size == 192) AES_ALLROUND = 12;
     else if(size == 256) AES_ALLROUND = 14;
     else return 0;
-
+    /*
     cout << "Plaintext : ";
     for(int i = 0 ; i < 2 ; i++)
     prts(state[i]);
     cout << endl;
     cout << "Key : ";
     prts(key);
-    cout << endl;
-    cout << "Ciphertext : ";
+    cout << endl;*/
 
     clock_t start, end;
     double result;
 
     start = clock();
     int S_INDEX = 0;
-    for(S_INDEX = 0 ; S_INDEX < 2 ; S_INDEX++)
+    for(S_INDEX = 0 ; S_INDEX < 1 ; S_INDEX++)
     {
     addroundkey(state[S_INDEX], key);
     for(AES_NOWROUND = 1 ; AES_NOWROUND < AES_ALLROUND  ; AES_NOWROUND++)
@@ -266,11 +265,12 @@ int main()
     
     end = clock();
     result = (double)(end - start);
- 
+    cout << "[AES] ENCRYPTION ELAPSE TIME : " << result << "ms (MY)" << endl;
+
+    cout << "Ciphertext : ";
     prts(state[S_INDEX]);
     }
     cout << endl;
-    cout << "elapse time : " << result << "" << endl;
 } 
 
 

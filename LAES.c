@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "LAES.h"
 #define MUL2(a) (a<<1)^(a&0x80?0x1b:0)
 #define MUL3(a) MUL2(a)^a
@@ -144,6 +145,10 @@ void AES_ENC(u8 PT[16], u8 RK[16],u8 CT[16], int keysize)
     for(i = 0 ; i < 16 ; i++)
     CT[i] = PT[i];
 
+    clock_t start, end;
+    double result;
+
+    start = clock();
     // prt(RK);
     AddRoundKey(CT, RK);
     // prt(CT);
@@ -166,6 +171,11 @@ void AES_ENC(u8 PT[16], u8 RK[16],u8 CT[16], int keysize)
     SubBytes(CT);
     Shiftrows(CT);
     AddRoundKey(CT, RK + 16 * 10);
+
+    end = clock();
+    result = (double) (end - start);
+
+    printf("[AES] ENCRYPTION ELAPSE TIME : %.0lf ms (LAB)\n", result);
 }
 
 int main()
@@ -180,7 +190,8 @@ int main()
     AES_KeySchedule(MK, RK, keysize);
     AES_ENC(PT, RK, CT, keysize);
 
+    printf("Ciphertext : ");
     for(int i = 0 ; i < 16 ; i++)
-    printf("%02x ", CT[i]);
+    printf("%02X", CT[i]);
     printf("\n");
 }
