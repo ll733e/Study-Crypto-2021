@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+typedef unsigned char u8;
+typedef unsigned int u32;
 #define MUL2(a) (a<<1)^(a&0x80?0x1b:0)
 #define MUL3(a) MUL2(a)^a
 #define MUL4(a) MUL2((MUL2(a)))
@@ -10,8 +12,13 @@
 #define MULB(a) (MUL8(a))^(MUL2(a))^(a)
 #define MULD(a) (MUL8(a))^(MUL4(a))^(a)
 #define MULE(a) (MUL8(a))^(MUL4(a))^(MUL2(a))
-typedef unsigned char u8;
-typedef unsigned int u32;
+#define RotWord(x) ((x<<8) | (x>>24))
+#define SubWord(x)  \
+    ((u32)Sbox[(u8)(x >> 24)] << 24) \
+    | ((u32)Sbox[(u8)((x >> 16) & 0xFF)] << 16) \
+    | ((u32)Sbox[(u8)((x >> 8) & 0xFF)] << 8) \
+    | ((u32)Sbox[(u8)(x & 0xff)]) \
+
 
 u8 Sbox[256] = {
     0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
@@ -30,6 +37,10 @@ u8 Sbox[256] = {
     0x70, 0x3e, 0xb5, 0x66, 0x48, 0x03, 0xf6, 0x0e, 0x61, 0x35, 0x57, 0xb9, 0x86, 0xc1, 0x1d, 0x9e,
     0xe1, 0xf8, 0x98, 0x11, 0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf,
     0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16 
+    };
+
+u8 InvSbox[256] = {
+    0x00, 
     };
 
 u32 u4byte_in(u8 *x)
@@ -53,13 +64,6 @@ void AES_KeyWordToByte(u32 W[], u8 RK[])
 }
 
 u32 Rcons[10] = { 0x01000000, 0x02000000, 0x04000000, 0x08000000, 0x10000000, 0x20000000, 0x40000000, 0x80000000, 0x1b000000, 0x36000000 };
-
-#define RotWord(x) ((x<<8) | (x>>24))
-#define SubWord(x)  \
-    ((u32)Sbox[(u8)(x >> 24)] << 24) \
-    | ((u32)Sbox[(u8)((x >> 16) & 0xFF)] << 16) \
-    | ((u32)Sbox[(u8)((x >> 8) & 0xFF)] << 8) \
-    | ((u32)Sbox[(u8)(x & 0xff)]) \
 
 void RoundkeyGeneration128(u8 MK[], u8 RK[])
 {
@@ -111,12 +115,37 @@ void SubBytes(u8 S[16])
     S[12] = Sbox[S[12]]; S[13] = Sbox[S[13]]; S[14] = Sbox[S[14]]; S[15] = Sbox[S[15]];
 }
 
+void InvShiftRows(u8 S[16])
+{
+    u8 temp;
+    temp = S[1]; S[1] = S[13]; S[5] = S[9]; S[13] = temp;
+    temp = S[2]; S[2] = S[10]; S[10] = temp; temp = S[6]; S[6] = S[14]; S[14] = temp;
+    temp = S[3]; S[3] = S[7]; S[7] = S[11]; S[11] = S[15]; S[15] = temp;
+}
+
 void Shiftrows(u8 S[16])
 {
     u8 temp;
     temp = S[1]; S[1] = S[5]; S[5] = S[9]; S[9] = S[13]; S[13] = temp;
     temp = S[2]; S[2] = S[10]; S[10] = temp; temp = S[6]; S[6] = S[14]; S[14] = temp;
     temp = S[15]; S[15] = S[11]; S[11] = S[7]; S[7] = S[3]; S[3] = temp;
+}
+
+void InvMixcolumns(u8 S[16])
+{
+    u8 temp[16];
+
+    for(int i = 0; i < 16; i += 4)
+    {
+        temp[i] = MULE(S[i]) ^ MULB(S[i+1]) ^ MULD(S[i+2]) ^ MUL9(S[i+3]);
+        temp[i] = MUL9(S[i]) ^ MULE(S[i+1]) ^ MULB(S[i+2]) ^ MULD(S[i+3]);
+        temp[i] = MULD(S[i]) ^ MUL9(S[i+1]) ^ MULE(S[i+2]) ^ MULB(S[i+3]);
+        temp[i] = MULB(S[i]) ^ MULD(S[i+1]) ^ MUL9(S[i+2]) ^ MULE(S[i+3]);
+    }
+    S[0] = temp[0]; S[1] = temp[1]; S[2] = temp[2]; S[3] = temp[3];
+    S[4] = temp[4]; S[5] = temp[5]; S[6] = temp[6]; S[7] = temp[7];
+    S[8] = temp[8]; S[9] = temp[9]; S[10] = temp[10]; S[11] = temp[11];
+    S[12] = temp[12]; S[13] = temp[13]; S[14] = temp[14]; S[15] = temp[15];
 }
 
 void Mixcolumns(u8 S[16])
@@ -163,10 +192,6 @@ void AES_ENC(u8 PT[16], u8 RK[16],u8 CT[16], int keysize)
     for(i = 0 ; i < 16 ; i++)
     CT[i] = PT[i];
 
-    clock_t start, end;
-    double result;
-
-    start = clock();
     // prt(RK);
     AddRoundKey(CT, RK);
     // prt(CT);
@@ -189,13 +214,45 @@ void AES_ENC(u8 PT[16], u8 RK[16],u8 CT[16], int keysize)
     SubBytes(CT);
     Shiftrows(CT);
     AddRoundKey(CT, RK + 16 * 10);
+}
+/*
+void AES_DEC(u8 PT[16], u8 RK[16],u8 CT[16], int keysize)
+{
+    int Nr = keysize / 32 + 6;
+    int i;
 
-    end = clock();
-    result = (double) (end - start);
+    for(i = 0 ; i < 16 ; i++)
+    CT[i] = PT[i];
 
-    printf("[AES] ENCRYPTION ELAPSE TIME : %.0lf ms (LAB)\n", result);
+    // prt(RK);
+    AddRoundKey(CT, RK);
+    // prt(CT);
+
+    for(int i = 0 ; i < Nr - 1 ; i++)
+    {   
+        // printf("%d라운드 InvShiftRows || ", i+1);
+        InvShiftrows(CT);
+        // prt(CT);
+
+        // printf("%d라운드 InvSubBytes || ", i+1);
+        InvSubBytes(CT);
+        // prt(CT);
+
+        // printf("%d라운드 Addroundkey || ", i+1);
+        AddRoundKey(CT, RK + 16 * (i + 1));
+        // prt(CT);
+
+        // printf("%d라운드 InvMixcolumns || ", i+1);
+        InvMixcolumns(CT);
+        // prt(CT);
+
+    }
+    InvShiftRows(CT);
+    InvSubBytes(CT);
+    AddRoundKey(CT, RK + 16 * 10);
 }
 
+*/
 int main()
 {
     int i;
@@ -205,9 +262,17 @@ int main()
     u8 RK[240] = { 0x00, }; 
     int keysize = 128;
 
+    double result;
+    clock_t start, end;
+    start = clock();
     AES_KeySchedule(MK, RK, keysize);
     AES_ENC(PT, RK, CT, keysize);
+    
+    
+    end = clock();
+    result = (double) (end - start);
 
+    printf("[AES] ENCRYPTION ELAPSE TIME : %.0lf ms (LAB)\n", result);
     printf("Ciphertext : ");
     for(int i = 0 ; i < 16 ; i++)
     printf("%02X", CT[i]);

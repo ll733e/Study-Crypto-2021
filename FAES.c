@@ -321,7 +321,7 @@ void AES_ENC(u8 PT[16], u8 RK[16],u8 CT[16], int keysize)
         // prt(CT);
         // printf("%d라운드 Mixcolumns || ", i+1);
         Mixcolumns(CT);
-        // prt(CT);
+        // prt(CT)
         // printf("%d라운드 Addroundkey || ", i+1);
         AddRoundKey(CT, RK + 16 * (i + 1));
         // prt(CT);
