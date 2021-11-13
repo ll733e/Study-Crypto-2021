@@ -226,9 +226,9 @@ int main()
     0x67, 0xef, 0x78, 0xf0
     };
 
-    int size;
-    cout << "128, 192, 256 >> ";
-    cin >> size;
+    int size = 128;
+    //cout << "128, 192, 256 >> ";
+    //cin >> size;
     if(size == 128)      AES_ALLROUND = 10;
     else if(size == 192) AES_ALLROUND = 12;
     else if(size == 256) AES_ALLROUND = 14;
@@ -245,7 +245,10 @@ int main()
     clock_t start, end;
     double result;
 
-    start = clock();
+    start = clock(); // 시작
+    for(int i = 0 ; i < 30000 ; i++)
+    {
+        
     int S_INDEX = 0;
     for(S_INDEX = 0 ; S_INDEX < 1 ; S_INDEX++)
     {
@@ -262,14 +265,15 @@ int main()
     subbyte(state[S_INDEX]);
     shiftrows(state[S_INDEX]);
     addroundkey(state[S_INDEX], key);
-    
+    }
+
+    }
     end = clock();
     result = (double)(end - start);
     cout << "[AES] ENCRYPTION ELAPSE TIME : " << result << "ms (MY)" << endl;
 
-    cout << "Ciphertext : ";
-    prts(state[S_INDEX]);
-    }
+    //cout << "Ciphertext : ";
+    //prts(state[0]);
     cout << endl;
 } 
 
