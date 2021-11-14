@@ -69,10 +69,6 @@ u8 RSbox[256] = {
     0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d 
     };
 
-u8 InvSbox[256] = {
-    0x00, 
-    };
-
 u32 u4byte_in(u8 *x)
 {
     return (x[0] << 24) | (x[1] << 16) | (x[2] << 8) | x[3];
@@ -241,7 +237,7 @@ void AES_DEC(u8 PT[16], u8 RK[16],u8 CT[16], int keysize)
     int Nr = keysize / 32 + 6;
     int i;
     for(i = 0 ; i < 16 ; i++)
-    PT[i] = CT[i];
+    CT[i] = PT[i];
 
     // prt(RK);
     AddRoundKey(CT, RK + 16 * 10);
@@ -249,27 +245,35 @@ void AES_DEC(u8 PT[16], u8 RK[16],u8 CT[16], int keysize)
 
     for(int i = 0 ; i < Nr - 1 ; i++)
     {   
-        printf("%d라운드 InvShiftRows || ", i+1);
+        //printf("%d라운드 InvShiftRows || ", i+1);
         InvShiftrows(CT);
-        prt(CT);
+        //prt(CT);
 
-        printf("%d라운드 InvSubBytes || ", i+1);
+        //printf("%d라운드 InvSubBytes || ", i+1);
         InvSubBytes(CT);
-        prt(CT);
+        //prt(CT);
 
-        printf("%d라운드 Addroundkey || ", i+1);
+        //printf("%d라운드 Addroundkey || ", i+1);
         AddRoundKey(CT, RK + (16 * 9) - 16 * i);
-        prt(CT);
+        //prt(CT);
 
-        printf("%d라운드 InvMixcolumns || ", i+1);
+        //printf("%d라운드 InvMixcolumns || ", i+1);
         InvMixcolumns(CT);
-        prt(CT);
+        //prt(CT);
 
     }
     InvShiftrows(CT);
     InvSubBytes(CT);
     AddRoundKey(CT, RK + 0);
-    prt(CT);
+    //prt(CT);
+}
+
+void pprt(u8 PT[])
+{
+    printf("AFTER Text : ");
+    for(int i = 0 ; i < 16 ; i++)
+    printf("%02X", PT[i]);
+    printf("\n");
 }
 
 int main()
@@ -278,7 +282,8 @@ int main()
     u8 PT[16] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff };
     u8 MK[16] = { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 };
     u8 CT[16] = { 0x00, };
-    u8 RK[240] = { 0x00, }; 
+    u8 RE[16] = { 0x00, };
+    u8 RK[240] = { 0x00, };
     int keysize = 128;
 
 /*
@@ -301,24 +306,14 @@ int main()
     AES_ENC(PT, RK, CT, keysize);
 */
 
-    
-
-    printf("Plaintext : ");
-    for(int i = 0 ; i < 16 ; i++)
-    printf("%02X", PT[i]);
-    printf("\n");
+    AES_KeySchedule(MK, RK, keysize);
+    AES_ENC(PT, RK, RE, keysize);
+    AES_KeySchedule(MK, RK, keysize);
+    AES_ENC(RE, RK, RE, keysize);
 
     AES_KeySchedule(MK, RK, keysize);
-    AES_ENC(PT, RK, CT, keysize);
-    printf("ENCRYPTION : ");
-    for(int i = 0 ; i < 16 ; i++)
-    printf("%02X", CT[i]);
-    printf("\n");
-
-    AES_DEC(PT, RK, CT, keysize);
-    printf("DECRYPTION : ");
-    for(int i = 0 ; i < 16 ; i++)
-    printf("%02X", CT[i]);
-    printf("\n");
-
+    AES_DEC(RE, RK, RE, keysize);
+    AES_KeySchedule(MK, RK, keysize);
+    AES_DEC(RE, RK, RE, keysize);
+    pprt(RE);
 }
