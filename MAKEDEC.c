@@ -268,11 +268,11 @@ void AES_DEC(u8 PT[16], u8 RK[16],u8 CT[16], int keysize)
     //prt(CT);
 }
 
-void pprt(u8 PT[])
+void pprt(u8 A[])
 {
     printf("AFTER Text : ");
     for(int i = 0 ; i < 16 ; i++)
-    printf("%02X", PT[i]);
+    printf("%02X", A[i]);
     printf("\n");
 }
 
@@ -314,6 +314,6 @@ int main()
     AES_KeySchedule(MK, RK, keysize);
     AES_DEC(RE, RK, RE, keysize);
     AES_KeySchedule(MK, RK, keysize);
-    AES_DEC(RE, RK, RE, keysize);
+
     pprt(RE);
 }
