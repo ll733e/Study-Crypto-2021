@@ -508,16 +508,36 @@ int main()
     u32 W[60] = { 0x00, };
     int keysize = 128;
     
+    double result;
+    clock_t start, end;
+
+    start = clock();
+    for(int i = 0 ; i < 10000 ; i++)
+    {
     AES_KeySchedule(MK, RK, keysize);
     AES_ENC(PT, RK, CT, keysize);
-    for(i = 0 ; i < 16 ; i++)   printf("%02x ", CT[i]);
-    puts("");
+    }
+    end = clock();
 
+    result = end - start;
+    printf("AES ENCRYPTION ELAPSE TIME : %0.lf ms\n", result);
+    for(i = 0 ; i < 16 ; i++)   printf("%02X", CT[i]);
+    puts("");
+    
+    start = clock();
+    for(int i = 0 ; i < 10000 ; i++)
+    {
     AES_KeySchedule_Optimization(MK, W, keysize);
     AES_ENC_Optimization(PT, W, CT, keysize);
-    for(i = 0 ; i < 16 ; i++)   printf("%02x ", CT[i]);
-    printf("\n"); 
+    }
+    end = clock();
+
+    result = end - start;
     
+    printf("AES ENCRYPTION OPTIMIZATION BELAPSE TIME : %0.lf ms\n", result);
+
+    for(i = 0 ; i < 16 ; i++)   printf("%02X", CT[i]);
+    puts("");
     
     /*
     printf("Ciphertext : ");
