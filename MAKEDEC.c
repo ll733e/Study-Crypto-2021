@@ -26,7 +26,7 @@ void prt(u8 CT[16])
     {
     for(int k = 0 ; k < 4 ; k++)
     printf("%02X ", CT[k * 4 + i]);
-    printf("\n");
+    printf("\n"); 
     }
     printf("\n");
 }
@@ -198,9 +198,7 @@ void Mixcolumns(u8 S[16])
     S[12] = temp[12]; S[13] = temp[13]; S[14] = temp[14]; S[15] = temp[15];
 }
 
-
-
-void AES_ENC(u8 PT[16], u8 RK[16],u8 CT[16], int keysize)
+void AES_ENC(u8 PT[16], u8 RK[16], u8 CT[16], int keysize)
 {
     int Nr = keysize / 32 + 6;
     int i;
@@ -232,7 +230,7 @@ void AES_ENC(u8 PT[16], u8 RK[16],u8 CT[16], int keysize)
     AddRoundKey(CT, RK + 16 * 10);
 }
 
-void AES_DEC(u8 PT[16], u8 RK[16],u8 CT[16], int keysize)
+void AES_DEC(u8 PT[16], u8 RK[16], u8 CT[16], int keysize)
 {
     int Nr = keysize / 32 + 6;
     int i;
@@ -248,19 +246,15 @@ void AES_DEC(u8 PT[16], u8 RK[16],u8 CT[16], int keysize)
         //printf("%d라운드 InvShiftRows || ", i+1);
         InvShiftrows(CT);
         //prt(CT);
-
         //printf("%d라운드 InvSubBytes || ", i+1);
         InvSubBytes(CT);
         //prt(CT);
-
         //printf("%d라운드 Addroundkey || ", i+1);
         AddRoundKey(CT, RK + (16 * 9) - 16 * i);
         //prt(CT);
-
         //printf("%d라운드 InvMixcolumns || ", i+1);
         InvMixcolumns(CT);
         //prt(CT);
-
     }
     InvShiftrows(CT);
     InvSubBytes(CT);
@@ -286,34 +280,24 @@ int main()
     u8 RK[240] = { 0x00, };
     int keysize = 128;
 
-/*
+
+    AES_KeySchedule(MK, RK, keysize);
     double result;
     clock_t start, end;
-    start = clock();
-    for(int i = 0 ; i < 30000 ; i++)
-    {
-    AES_KeySchedule(MK, RK, keysize);
-    AES_ENC(PT, RK, CT, keysize);
-    AES_KeySchedule(MK, RK, keysize);
-    AES_ENC(CT, RK, PT, keysize);
-    }
     
+    start = clock();
+    for(int i = 0 ; i < 10000 ; i++)
+    AES_ENC(PT, RK, CT, keysize);
     end = clock();
     result = (double) (end - start);
-    printf("[AES] ENCRYPTION ELAPSE TIME : %.0lf ms (LAB)\n", result);
-
-    AES_KeySchedule(MK, RK, keysize);
-    AES_ENC(PT, RK, CT, keysize);
-*/
-
-    AES_KeySchedule(MK, RK, keysize);
-    AES_ENC(PT, RK, RE, keysize);
-    AES_KeySchedule(MK, RK, keysize);
-    AES_ENC(RE, RK, RE, keysize);
-
-    AES_KeySchedule(MK, RK, keysize);
-    AES_DEC(RE, RK, RE, keysize);
-    AES_KeySchedule(MK, RK, keysize);
-
-    pprt(RE);
-}
+    result /= 10000;
+    printf("[AES] ENCRYPTION ELAPSE TIME : %.4lf ms (LAB)\n", result);
+    
+    start = clock();
+    for(int i = 0 ; i < 10000 ; i++)
+    AES_DEC(CT, RK, PT, keysize);
+    end = clock();
+    result = (double) (end - start);
+    result /= 10000;
+    printf("[AES] DECRYPTION ELAPSE TIME : %.4lf ms (LAB)\n", result);
+}   
