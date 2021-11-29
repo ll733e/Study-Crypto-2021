@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #define MUL2(a) (a<<1)^(a&0x80?0x1b:0)
 #define MUL3(a) MUL2(a)^a
@@ -551,7 +552,7 @@ void AES_ENC(u8 PT[16], u8 RK[], u8 CT[16], int keysize)
     int i;
 
     for(i = 0 ; i < 16 ; i++)
-    CT[i] = PT[i];
+    CT[i] = PT[i]; 
 
     // prt(RK);
     AddRoundKey(CT, RK);
@@ -871,7 +872,41 @@ void AES_DEC_Optimization(u8 PT[], u32 W[], u8 CT[], int keysize)
 
 }
 
-int main()
+void ECB_Encryption(char *inputfile, char *outputfile, u32 W[])
+{
+    FILE *rtp, *wfp;
+    u8 *inputbuf, *outputbuf, r;
+    u32 DataLen;
+    
+    // PKCS #7 PADDING
+    r = DataLen % 16;       // LAST BYTE
+    r = 16 - r;             // PADDING COUNT
+    inputbuf = calloc(DataLen + r, sizeof(u8));
+    outputbuf = calloc(DataLen + r, sizeof(u8));
+    fread(inputbuf, 1, DataLen, rtp); // Fill inputbuf as DataLen
+    memset(inputbuf + DataLen, r, r);    // inputbuff + DataLen, r Setting
+
+    fopen(inputfile, "rb");
+    if(rtp == NULL)
+        perror("fopen 실패!\n");
+    fseek(rtp, 0, SEEK_END);
+    DataLen = ftell(rtp);   // INPUTFILE SIZE (BYTES)
+    fseek(rtp, 0, SEEK_SET);
+
+    fopen(inputfile, "wb");
+    if(wfp == NULL)
+        perror("fopen 실패!\n");
+ 
+    fclose(rtp);
+    fclose(wfp);
+}
+
+void CBC_Encryption(char *inputfile, char *outputfile, u32 W[])
+{
+
+}
+
+int main(int argc, char *argv[])
 {
     int i;
     u8 PT[16] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff };
@@ -889,7 +924,17 @@ int main()
     u8 temp[16] = { 0x00, };
     int keysize = 128;
     
+    if(strcmp(argv[1], 'ebc') == 0)
+    { 
+        AES_KeySchedule_Optimization(MK, W, keysize);
+        ECB_Encryption(argv[2], argv[3], W);
+    }
+    else if(strcmp(argv[1], 'cbc') == 0)
+    {
+         
+    } 
 
+    /*
     // 속도 측정
     double result_enc_op, result_enc;
     clock_t start, end;
@@ -927,7 +972,6 @@ int main()
     double result = result_enc /= result_enc_op;
     printf("\n%0.10lf배 차이가 기록됨\n", result);
 
-    /*
     printf("u32 Te1[256]={\n");
     for(int i = 0 ; i < 256 ; i++)
     {

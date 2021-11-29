@@ -59,7 +59,7 @@ u8 RSbox[256] = {
     0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d 
     };
 
-u32 Te0[256] = {
+u32 Te0_ENC[256] = {
     0xc66363a5, 0xf87c7c84, 0xee777799, 0xf67b7b8d, 0xfff2f20d, 0xd66b6bbd, 0xde6f6fb1, 0x91c5c554, 
     0x60303050, 0x02010103, 0xce6767a9, 0x562b2b7d, 0xe7fefe19, 0xb5d7d762, 0x4dababe6, 0xec76769a, 
     0x8fcaca45, 0x1f82829d, 0x89c9c940, 0xfa7d7d87, 0xeffafa15, 0xb25959eb, 0x8e4747c9, 0xfbf0f00b, 
@@ -94,7 +94,7 @@ u32 Te0[256] = {
     0x824141c3, 0x299999b0, 0x5a2d2d77, 0x1e0f0f11, 0x7bb0b0cb, 0xa85454fc, 0x6dbbbbd6, 0x2c16163a
 };
 
-u32 Te1[256] = { 
+u32 Te1_ENC[256] = { 
     0xa5c66363, 0x84f87c7c, 0x99ee7777, 0x8df67b7b, 0x0dfff2f2, 0xbdd66b6b, 0xb1de6f6f, 0x5491c5c5, 
     0x50603030, 0x03020101, 0xa9ce6767, 0x7d562b2b, 0x19e7fefe, 0x62b5d7d7, 0xe64dabab, 0x9aec7676, 
     0x458fcaca, 0x9d1f8282, 0x4089c9c9, 0x87fa7d7d, 0x15effafa, 0xebb25959, 0xc98e4747, 0x0bfbf0f0, 
@@ -129,7 +129,7 @@ u32 Te1[256] = {
     0xc3824141, 0xb0299999, 0x775a2d2d, 0x111e0f0f, 0xcb7bb0b0, 0xfca85454, 0xd66dbbbb, 0x3a2c1616
 };
 
-u32 Te2[256] = { 
+u32 Te2_ENC[256] = { 
     0x63a5c663, 0x7c84f87c, 0x7799ee77, 0x7b8df67b, 0xf20dfff2, 0x6bbdd66b, 0x6fb1de6f, 0xc55491c5, 
     0x30506030, 0x01030201, 0x67a9ce67, 0x2b7d562b, 0xfe19e7fe, 0xd762b5d7, 0xabe64dab, 0x769aec76, 
     0xca458fca, 0x829d1f82, 0xc94089c9, 0x7d87fa7d, 0xfa15effa, 0x59ebb259, 0x47c98e47, 0xf00bfbf0, 
@@ -164,7 +164,7 @@ u32 Te2[256] = {
     0x41c38241, 0x99b02999, 0x2d775a2d, 0x0f111e0f, 0xb0cb7bb0, 0x54fca854, 0xbbd66dbb, 0x163a2c16
 };
 
-u32 Te3[256] = { 
+u32 Te3_ENC[256] = { 
     0x6363a5c6, 0x7c7c84f8, 0x777799ee, 0x7b7b8df6, 0xf2f20dff, 0x6b6bbdd6, 0x6f6fb1de, 0xc5c55491, 
     0x30305060, 0x01010302, 0x6767a9ce, 0x2b2b7d56, 0xfefe19e7, 0xd7d762b5, 0xababe64d, 0x76769aec, 
     0xcaca458f, 0x82829d1f, 0xc9c94089, 0x7d7d87fa, 0xfafa15ef, 0x5959ebb2, 0x4747c98e, 0xf0f00bfb, 
@@ -450,130 +450,130 @@ void AES_ENC_Optimization(u8 PT[], u32 W[], u8 CT[], int keysize)
     s3 = u4byte_in(PT + 12) ^ W[3];
     
     // 1 Round
-    t0 = Te0[s0 >> 24] ^ Te1[(s1 >> 16) & 0xff] ^ Te2[(s2 >> 8) & 0xff] ^ Te3[s3 & 0xff] ^ W[4];
-    t1 = Te0[s1 >> 24] ^ Te1[(s2 >> 16) & 0xff] ^ Te2[(s3 >> 8) & 0xff] ^ Te3[s0 & 0xff] ^ W[5];
-    t2 = Te0[s2 >> 24] ^ Te1[(s3 >> 16) & 0xff] ^ Te2[(s0 >> 8) & 0xff] ^ Te3[s1 & 0xff] ^ W[6];
-    t3 = Te0[s3 >> 24] ^ Te1[(s0 >> 16) & 0xff] ^ Te2[(s1 >> 8) & 0xff] ^ Te3[s2 & 0xff] ^ W[7];
+    t0 = Te0_ENC[s0 >> 24] ^ Te1_ENC[(s1 >> 16) & 0xff] ^ Te2_ENC[(s2 >> 8) & 0xff] ^ Te3_ENC[s3 & 0xff] ^ W[4];
+    t1 = Te0_ENC[s1 >> 24] ^ Te1_ENC[(s2 >> 16) & 0xff] ^ Te2_ENC[(s3 >> 8) & 0xff] ^ Te3_ENC[s0 & 0xff] ^ W[5];
+    t2 = Te0_ENC[s2 >> 24] ^ Te1_ENC[(s3 >> 16) & 0xff] ^ Te2_ENC[(s0 >> 8) & 0xff] ^ Te3_ENC[s1 & 0xff] ^ W[6];
+    t3 = Te0_ENC[s3 >> 24] ^ Te1_ENC[(s0 >> 16) & 0xff] ^ Te2_ENC[(s1 >> 8) & 0xff] ^ Te3_ENC[s2 & 0xff] ^ W[7];
     
     // 2 Round
-    s0 = Te0[t0 >> 24] ^ Te1[(t1 >> 16) & 0xff] ^ Te2[(t2 >> 8) & 0xff] ^ Te3[t3 & 0xff] ^ W[8];
-    s1 = Te0[t1 >> 24] ^ Te1[(t2 >> 16) & 0xff] ^ Te2[(t3 >> 8) & 0xff] ^ Te3[t0 & 0xff] ^ W[9];
-    s2 = Te0[t2 >> 24] ^ Te1[(t3 >> 16) & 0xff] ^ Te2[(t0 >> 8) & 0xff] ^ Te3[t1 & 0xff] ^ W[10];
-    s3 = Te0[t3 >> 24] ^ Te1[(t0 >> 16) & 0xff] ^ Te2[(t1 >> 8) & 0xff] ^ Te3[t2 & 0xff] ^ W[11];
+    s0 = Te0_ENC[t0 >> 24] ^ Te1_ENC[(t1 >> 16) & 0xff] ^ Te2_ENC[(t2 >> 8) & 0xff] ^ Te3_ENC[t3 & 0xff] ^ W[8];
+    s1 = Te0_ENC[t1 >> 24] ^ Te1_ENC[(t2 >> 16) & 0xff] ^ Te2_ENC[(t3 >> 8) & 0xff] ^ Te3_ENC[t0 & 0xff] ^ W[9];
+    s2 = Te0_ENC[t2 >> 24] ^ Te1_ENC[(t3 >> 16) & 0xff] ^ Te2_ENC[(t0 >> 8) & 0xff] ^ Te3_ENC[t1 & 0xff] ^ W[10];
+    s3 = Te0_ENC[t3 >> 24] ^ Te1_ENC[(t0 >> 16) & 0xff] ^ Te2_ENC[(t1 >> 8) & 0xff] ^ Te3_ENC[t2 & 0xff] ^ W[11];
 
     // 3 Round
-    t0 = Te0[s0 >> 24] ^ Te1[(s1 >> 16) & 0xff] ^ Te2[(s2 >> 8) & 0xff] ^ Te3[s3 & 0xff] ^ W[12];
-    t1 = Te0[s1 >> 24] ^ Te1[(s2 >> 16) & 0xff] ^ Te2[(s3 >> 8) & 0xff] ^ Te3[s0 & 0xff] ^ W[13];
-    t2 = Te0[s2 >> 24] ^ Te1[(s3 >> 16) & 0xff] ^ Te2[(s0 >> 8) & 0xff] ^ Te3[s1 & 0xff] ^ W[14];
-    t3 = Te0[s3 >> 24] ^ Te1[(s0 >> 16) & 0xff] ^ Te2[(s1 >> 8) & 0xff] ^ Te3[s2 & 0xff] ^ W[15];
+    t0 = Te0_ENC[s0 >> 24] ^ Te1_ENC[(s1 >> 16) & 0xff] ^ Te2_ENC[(s2 >> 8) & 0xff] ^ Te3_ENC[s3 & 0xff] ^ W[12];
+    t1 = Te0_ENC[s1 >> 24] ^ Te1_ENC[(s2 >> 16) & 0xff] ^ Te2_ENC[(s3 >> 8) & 0xff] ^ Te3_ENC[s0 & 0xff] ^ W[13];
+    t2 = Te0_ENC[s2 >> 24] ^ Te1_ENC[(s3 >> 16) & 0xff] ^ Te2_ENC[(s0 >> 8) & 0xff] ^ Te3_ENC[s1 & 0xff] ^ W[14];
+    t3 = Te0_ENC[s3 >> 24] ^ Te1_ENC[(s0 >> 16) & 0xff] ^ Te2_ENC[(s1 >> 8) & 0xff] ^ Te3_ENC[s2 & 0xff] ^ W[15];
 
     // 4 Round
-    s0 = Te0[t0 >> 24] ^ Te1[(t1 >> 16) & 0xff] ^ Te2[(t2 >> 8) & 0xff] ^ Te3[t3 & 0xff] ^ W[16];
-    s1 = Te0[t1 >> 24] ^ Te1[(t2 >> 16) & 0xff] ^ Te2[(t3 >> 8) & 0xff] ^ Te3[t0 & 0xff] ^ W[17];
-    s2 = Te0[t2 >> 24] ^ Te1[(t3 >> 16) & 0xff] ^ Te2[(t0 >> 8) & 0xff] ^ Te3[t1 & 0xff] ^ W[18];
-    s3 = Te0[t3 >> 24] ^ Te1[(t0 >> 16) & 0xff] ^ Te2[(t1 >> 8) & 0xff] ^ Te3[t2 & 0xff] ^ W[19];
+    s0 = Te0_ENC[t0 >> 24] ^ Te1_ENC[(t1 >> 16) & 0xff] ^ Te2_ENC[(t2 >> 8) & 0xff] ^ Te3_ENC[t3 & 0xff] ^ W[16];
+    s1 = Te0_ENC[t1 >> 24] ^ Te1_ENC[(t2 >> 16) & 0xff] ^ Te2_ENC[(t3 >> 8) & 0xff] ^ Te3_ENC[t0 & 0xff] ^ W[17];
+    s2 = Te0_ENC[t2 >> 24] ^ Te1_ENC[(t3 >> 16) & 0xff] ^ Te2_ENC[(t0 >> 8) & 0xff] ^ Te3_ENC[t1 & 0xff] ^ W[18];
+    s3 = Te0_ENC[t3 >> 24] ^ Te1_ENC[(t0 >> 16) & 0xff] ^ Te2_ENC[(t1 >> 8) & 0xff] ^ Te3_ENC[t2 & 0xff] ^ W[19];
 
     // 5 Round
-    t0 = Te0[s0 >> 24] ^ Te1[(s1 >> 16) & 0xff] ^ Te2[(s2 >> 8) & 0xff] ^ Te3[s3 & 0xff] ^ W[20];
-    t1 = Te0[s1 >> 24] ^ Te1[(s2 >> 16) & 0xff] ^ Te2[(s3 >> 8) & 0xff] ^ Te3[s0 & 0xff] ^ W[21];
-    t2 = Te0[s2 >> 24] ^ Te1[(s3 >> 16) & 0xff] ^ Te2[(s0 >> 8) & 0xff] ^ Te3[s1 & 0xff] ^ W[22];
-    t3 = Te0[s3 >> 24] ^ Te1[(s0 >> 16) & 0xff] ^ Te2[(s1 >> 8) & 0xff] ^ Te3[s2 & 0xff] ^ W[23];
+    t0 = Te0_ENC[s0 >> 24] ^ Te1_ENC[(s1 >> 16) & 0xff] ^ Te2_ENC[(s2 >> 8) & 0xff] ^ Te3_ENC[s3 & 0xff] ^ W[20];
+    t1 = Te0_ENC[s1 >> 24] ^ Te1_ENC[(s2 >> 16) & 0xff] ^ Te2_ENC[(s3 >> 8) & 0xff] ^ Te3_ENC[s0 & 0xff] ^ W[21];
+    t2 = Te0_ENC[s2 >> 24] ^ Te1_ENC[(s3 >> 16) & 0xff] ^ Te2_ENC[(s0 >> 8) & 0xff] ^ Te3_ENC[s1 & 0xff] ^ W[22];
+    t3 = Te0_ENC[s3 >> 24] ^ Te1_ENC[(s0 >> 16) & 0xff] ^ Te2_ENC[(s1 >> 8) & 0xff] ^ Te3_ENC[s2 & 0xff] ^ W[23];
 
     // 6 Round
-    s0 = Te0[t0 >> 24] ^ Te1[(t1 >> 16) & 0xff] ^ Te2[(t2 >> 8) & 0xff] ^ Te3[t3 & 0xff] ^ W[24];
-    s1 = Te0[t1 >> 24] ^ Te1[(t2 >> 16) & 0xff] ^ Te2[(t3 >> 8) & 0xff] ^ Te3[t0 & 0xff] ^ W[25];
-    s2 = Te0[t2 >> 24] ^ Te1[(t3 >> 16) & 0xff] ^ Te2[(t0 >> 8) & 0xff] ^ Te3[t1 & 0xff] ^ W[26];
-    s3 = Te0[t3 >> 24] ^ Te1[(t0 >> 16) & 0xff] ^ Te2[(t1 >> 8) & 0xff] ^ Te3[t2 & 0xff] ^ W[27];
+    s0 = Te0_ENC[t0 >> 24] ^ Te1_ENC[(t1 >> 16) & 0xff] ^ Te2_ENC[(t2 >> 8) & 0xff] ^ Te3_ENC[t3 & 0xff] ^ W[24];
+    s1 = Te0_ENC[t1 >> 24] ^ Te1_ENC[(t2 >> 16) & 0xff] ^ Te2_ENC[(t3 >> 8) & 0xff] ^ Te3_ENC[t0 & 0xff] ^ W[25];
+    s2 = Te0_ENC[t2 >> 24] ^ Te1_ENC[(t3 >> 16) & 0xff] ^ Te2_ENC[(t0 >> 8) & 0xff] ^ Te3_ENC[t1 & 0xff] ^ W[26];
+    s3 = Te0_ENC[t3 >> 24] ^ Te1_ENC[(t0 >> 16) & 0xff] ^ Te2_ENC[(t1 >> 8) & 0xff] ^ Te3_ENC[t2 & 0xff] ^ W[27];
 
     // 7 Round
-    t0 = Te0[s0 >> 24] ^ Te1[(s1 >> 16) & 0xff] ^ Te2[(s2 >> 8) & 0xff] ^ Te3[s3 & 0xff] ^ W[28];
-    t1 = Te0[s1 >> 24] ^ Te1[(s2 >> 16) & 0xff] ^ Te2[(s3 >> 8) & 0xff] ^ Te3[s0 & 0xff] ^ W[29];
-    t2 = Te0[s2 >> 24] ^ Te1[(s3 >> 16) & 0xff] ^ Te2[(s0 >> 8) & 0xff] ^ Te3[s1 & 0xff] ^ W[30];
-    t3 = Te0[s3 >> 24] ^ Te1[(s0 >> 16) & 0xff] ^ Te2[(s1 >> 8) & 0xff] ^ Te3[s2 & 0xff] ^ W[31];
+    t0 = Te0_ENC[s0 >> 24] ^ Te1_ENC[(s1 >> 16) & 0xff] ^ Te2_ENC[(s2 >> 8) & 0xff] ^ Te3_ENC[s3 & 0xff] ^ W[28];
+    t1 = Te0_ENC[s1 >> 24] ^ Te1_ENC[(s2 >> 16) & 0xff] ^ Te2_ENC[(s3 >> 8) & 0xff] ^ Te3_ENC[s0 & 0xff] ^ W[29];
+    t2 = Te0_ENC[s2 >> 24] ^ Te1_ENC[(s3 >> 16) & 0xff] ^ Te2_ENC[(s0 >> 8) & 0xff] ^ Te3_ENC[s1 & 0xff] ^ W[30];
+    t3 = Te0_ENC[s3 >> 24] ^ Te1_ENC[(s0 >> 16) & 0xff] ^ Te2_ENC[(s1 >> 8) & 0xff] ^ Te3_ENC[s2 & 0xff] ^ W[31];
 
     // 8 Round
-    s0 = Te0[t0 >> 24] ^ Te1[(t1 >> 16) & 0xff] ^ Te2[(t2 >> 8) & 0xff] ^ Te3[t3 & 0xff] ^ W[32];
-    s1 = Te0[t1 >> 24] ^ Te1[(t2 >> 16) & 0xff] ^ Te2[(t3 >> 8) & 0xff] ^ Te3[t0 & 0xff] ^ W[33];
-    s2 = Te0[t2 >> 24] ^ Te1[(t3 >> 16) & 0xff] ^ Te2[(t0 >> 8) & 0xff] ^ Te3[t1 & 0xff] ^ W[34];
-    s3 = Te0[t3 >> 24] ^ Te1[(t0 >> 16) & 0xff] ^ Te2[(t1 >> 8) & 0xff] ^ Te3[t2 & 0xff] ^ W[35];
+    s0 = Te0_ENC[t0 >> 24] ^ Te1_ENC[(t1 >> 16) & 0xff] ^ Te2_ENC[(t2 >> 8) & 0xff] ^ Te3_ENC[t3 & 0xff] ^ W[32];
+    s1 = Te0_ENC[t1 >> 24] ^ Te1_ENC[(t2 >> 16) & 0xff] ^ Te2_ENC[(t3 >> 8) & 0xff] ^ Te3_ENC[t0 & 0xff] ^ W[33];
+    s2 = Te0_ENC[t2 >> 24] ^ Te1_ENC[(t3 >> 16) & 0xff] ^ Te2_ENC[(t0 >> 8) & 0xff] ^ Te3_ENC[t1 & 0xff] ^ W[34];
+    s3 = Te0_ENC[t3 >> 24] ^ Te1_ENC[(t0 >> 16) & 0xff] ^ Te2_ENC[(t1 >> 8) & 0xff] ^ Te3_ENC[t2 & 0xff] ^ W[35];
 
     if(Nr == 10)
     {
         // 9 Round
-        t0 = Te0[s0 >> 24] ^ Te1[(s1 >> 16) & 0xff] ^ Te2[(s2 >> 8) & 0xff] ^ Te3[s3 & 0xff] ^ W[36];
-        t1 = Te0[s1 >> 24] ^ Te1[(s2 >> 16) & 0xff] ^ Te2[(s3 >> 8) & 0xff] ^ Te3[s0 & 0xff] ^ W[37];
-        t2 = Te0[s2 >> 24] ^ Te1[(s3 >> 16) & 0xff] ^ Te2[(s0 >> 8) & 0xff] ^ Te3[s1 & 0xff] ^ W[38];
-        t3 = Te0[s3 >> 24] ^ Te1[(s0 >> 16) & 0xff] ^ Te2[(s1 >> 8) & 0xff] ^ Te3[s2 & 0xff] ^ W[39];
+        t0 = Te0_ENC[s0 >> 24] ^ Te1_ENC[(s1 >> 16) & 0xff] ^ Te2_ENC[(s2 >> 8) & 0xff] ^ Te3_ENC[s3 & 0xff] ^ W[36];
+        t1 = Te0_ENC[s1 >> 24] ^ Te1_ENC[(s2 >> 16) & 0xff] ^ Te2_ENC[(s3 >> 8) & 0xff] ^ Te3_ENC[s0 & 0xff] ^ W[37];
+        t2 = Te0_ENC[s2 >> 24] ^ Te1_ENC[(s3 >> 16) & 0xff] ^ Te2_ENC[(s0 >> 8) & 0xff] ^ Te3_ENC[s1 & 0xff] ^ W[38];
+        t3 = Te0_ENC[s3 >> 24] ^ Te1_ENC[(s0 >> 16) & 0xff] ^ Te2_ENC[(s1 >> 8) & 0xff] ^ Te3_ENC[s2 & 0xff] ^ W[39];
 
         // 10 Round
-        s0 = (Te2[t0 >> 24] & 0xff000000) ^ (Te3[(t1 >> 16) & 0xff] & 0x00ff0000) ^ (Te0[(t2 >> 8) & 0xff] & 0x0000ff00) ^ (Te1[t3 & 0xff] & 0x000000ff) ^ W[40];
-        s1 = (Te2[t1 >> 24] & 0xff000000) ^ (Te3[(t2 >> 16) & 0xff] & 0x00ff0000) ^ (Te0[(t3 >> 8) & 0xff] & 0x0000ff00) ^ (Te1[t0 & 0xff] & 0x000000ff) ^ W[41];
-        s2 = (Te2[t2 >> 24] & 0xff000000) ^ (Te3[(t3 >> 16) & 0xff] & 0x00ff0000) ^ (Te0[(t0 >> 8) & 0xff] & 0x0000ff00) ^ (Te1[t1 & 0xff] & 0x000000ff) ^ W[42];
-        s3 = (Te2[t3 >> 24] & 0xff000000) ^ (Te3[(t0 >> 16) & 0xff] & 0x00ff0000) ^ (Te0[(t1 >> 8) & 0xff] & 0x0000ff00) ^ (Te1[t2 & 0xff] & 0x000000ff) ^ W[43];
+        s0 = (Te2_ENC[t0 >> 24] & 0xff000000) ^ (Te3_ENC[(t1 >> 16) & 0xff] & 0x00ff0000) ^ (Te0_ENC[(t2 >> 8) & 0xff] & 0x0000ff00) ^ (Te1_ENC[t3 & 0xff] & 0x000000ff) ^ W[40];
+        s1 = (Te2_ENC[t1 >> 24] & 0xff000000) ^ (Te3_ENC[(t2 >> 16) & 0xff] & 0x00ff0000) ^ (Te0_ENC[(t3 >> 8) & 0xff] & 0x0000ff00) ^ (Te1_ENC[t0 & 0xff] & 0x000000ff) ^ W[41];
+        s2 = (Te2_ENC[t2 >> 24] & 0xff000000) ^ (Te3_ENC[(t3 >> 16) & 0xff] & 0x00ff0000) ^ (Te0_ENC[(t0 >> 8) & 0xff] & 0x0000ff00) ^ (Te1_ENC[t1 & 0xff] & 0x000000ff) ^ W[42];
+        s3 = (Te2_ENC[t3 >> 24] & 0xff000000) ^ (Te3_ENC[(t0 >> 16) & 0xff] & 0x00ff0000) ^ (Te0_ENC[(t1 >> 8) & 0xff] & 0x0000ff00) ^ (Te1_ENC[t2 & 0xff] & 0x000000ff) ^ W[43];
     }
     else if(Nr == 12)
     {
         // 9 Round
-        t0 = Te0[s0 >> 24] ^ Te1[(s1 >> 16) & 0xff] ^ Te2[(s2 >> 8) & 0xff] ^ Te3[s3 & 0xff] ^ W[36];
-        t1 = Te0[s1 >> 24] ^ Te1[(s2 >> 16) & 0xff] ^ Te2[(s3 >> 8) & 0xff] ^ Te3[s0 & 0xff] ^ W[37];
-        t2 = Te0[s2 >> 24] ^ Te1[(s3 >> 16) & 0xff] ^ Te2[(s0 >> 8) & 0xff] ^ Te3[s1 & 0xff] ^ W[38];
-        t3 = Te0[s3 >> 24] ^ Te1[(s0 >> 16) & 0xff] ^ Te2[(s1 >> 8) & 0xff] ^ Te3[s2 & 0xff] ^ W[39];
+        t0 = Te0_ENC[s0 >> 24] ^ Te1_ENC[(s1 >> 16) & 0xff] ^ Te2_ENC[(s2 >> 8) & 0xff] ^ Te3_ENC[s3 & 0xff] ^ W[36];
+        t1 = Te0_ENC[s1 >> 24] ^ Te1_ENC[(s2 >> 16) & 0xff] ^ Te2_ENC[(s3 >> 8) & 0xff] ^ Te3_ENC[s0 & 0xff] ^ W[37];
+        t2 = Te0_ENC[s2 >> 24] ^ Te1_ENC[(s3 >> 16) & 0xff] ^ Te2_ENC[(s0 >> 8) & 0xff] ^ Te3_ENC[s1 & 0xff] ^ W[38];
+        t3 = Te0_ENC[s3 >> 24] ^ Te1_ENC[(s0 >> 16) & 0xff] ^ Te2_ENC[(s1 >> 8) & 0xff] ^ Te3_ENC[s2 & 0xff] ^ W[39];
 
         // 10 Round
-        s0 = Te0[t0 >> 24] ^ Te1[(t1 >> 16) & 0xff] ^ Te2[(t2 >> 8) & 0xff] ^ Te3[t3 & 0xff] ^ W[40];
-        s1 = Te0[t1 >> 24] ^ Te1[(t2 >> 16) & 0xff] ^ Te2[(t3 >> 8) & 0xff] ^ Te3[t0 & 0xff] ^ W[41];
-        s2 = Te0[t2 >> 24] ^ Te1[(t3 >> 16) & 0xff] ^ Te2[(t0 >> 8) & 0xff] ^ Te3[t1 & 0xff] ^ W[42];
-        s3 = Te0[t3 >> 24] ^ Te1[(t0 >> 16) & 0xff] ^ Te2[(t1 >> 8) & 0xff] ^ Te3[t2 & 0xff] ^ W[43];
+        s0 = Te0_ENC[t0 >> 24] ^ Te1_ENC[(t1 >> 16) & 0xff] ^ Te2_ENC[(t2 >> 8) & 0xff] ^ Te3_ENC[t3 & 0xff] ^ W[40];
+        s1 = Te0_ENC[t1 >> 24] ^ Te1_ENC[(t2 >> 16) & 0xff] ^ Te2_ENC[(t3 >> 8) & 0xff] ^ Te3_ENC[t0 & 0xff] ^ W[41];
+        s2 = Te0_ENC[t2 >> 24] ^ Te1_ENC[(t3 >> 16) & 0xff] ^ Te2_ENC[(t0 >> 8) & 0xff] ^ Te3_ENC[t1 & 0xff] ^ W[42];
+        s3 = Te0_ENC[t3 >> 24] ^ Te1_ENC[(t0 >> 16) & 0xff] ^ Te2_ENC[(t1 >> 8) & 0xff] ^ Te3_ENC[t2 & 0xff] ^ W[43];
 
         // 11 Round
-        t0 = Te0[s0 >> 24] ^ Te1[(s1 >> 16) & 0xff] ^ Te2[(s2 >> 8) & 0xff] ^ Te3[s3 & 0xff] ^ W[44];
-        t1 = Te0[s1 >> 24] ^ Te1[(s2 >> 16) & 0xff] ^ Te2[(s3 >> 8) & 0xff] ^ Te3[s0 & 0xff] ^ W[45];
-        t2 = Te0[s2 >> 24] ^ Te1[(s3 >> 16) & 0xff] ^ Te2[(s0 >> 8) & 0xff] ^ Te3[s1 & 0xff] ^ W[46];
-        t3 = Te0[s3 >> 24] ^ Te1[(s0 >> 16) & 0xff] ^ Te2[(s1 >> 8) & 0xff] ^ Te3[s2 & 0xff] ^ W[47];
+        t0 = Te0_ENC[s0 >> 24] ^ Te1_ENC[(s1 >> 16) & 0xff] ^ Te2_ENC[(s2 >> 8) & 0xff] ^ Te3_ENC[s3 & 0xff] ^ W[44];
+        t1 = Te0_ENC[s1 >> 24] ^ Te1_ENC[(s2 >> 16) & 0xff] ^ Te2_ENC[(s3 >> 8) & 0xff] ^ Te3_ENC[s0 & 0xff] ^ W[45];
+        t2 = Te0_ENC[s2 >> 24] ^ Te1_ENC[(s3 >> 16) & 0xff] ^ Te2_ENC[(s0 >> 8) & 0xff] ^ Te3_ENC[s1 & 0xff] ^ W[46];
+        t3 = Te0_ENC[s3 >> 24] ^ Te1_ENC[(s0 >> 16) & 0xff] ^ Te2_ENC[(s1 >> 8) & 0xff] ^ Te3_ENC[s2 & 0xff] ^ W[47];
 
         // 12 Round
-        s0 = (Te2[t0 >> 24] & 0xff000000) ^ (Te3[(t1 >> 16) & 0xff] & 0x00ff0000) ^ (Te0[(t2 >> 8) & 0xff] & 0x0000ff00) ^ (Te1[t3 & 0xff] & 0x000000ff) ^ W[48];
-        s1 = (Te2[t1 >> 24] & 0xff000000) ^ (Te3[(t2 >> 16) & 0xff] & 0x00ff0000) ^ (Te0[(t3 >> 8) & 0xff] & 0x0000ff00) ^ (Te1[t0 & 0xff] & 0x000000ff) ^ W[49];
-        s2 = (Te2[t2 >> 24] & 0xff000000) ^ (Te3[(t3 >> 16) & 0xff] & 0x00ff0000) ^ (Te0[(t0 >> 8) & 0xff] & 0x0000ff00) ^ (Te1[t1 & 0xff] & 0x000000ff) ^ W[50];
-        s3 = (Te2[t3 >> 24] & 0xff000000) ^ (Te3[(t0 >> 16) & 0xff] & 0x00ff0000) ^ (Te0[(t1 >> 8) & 0xff] & 0x0000ff00) ^ (Te1[t2 & 0xff] & 0x000000ff) ^ W[51];
+        s0 = (Te2_ENC[t0 >> 24] & 0xff000000) ^ (Te3_ENC[(t1 >> 16) & 0xff] & 0x00ff0000) ^ (Te0_ENC[(t2 >> 8) & 0xff] & 0x0000ff00) ^ (Te1_ENC[t3 & 0xff] & 0x000000ff) ^ W[48];
+        s1 = (Te2_ENC[t1 >> 24] & 0xff000000) ^ (Te3_ENC[(t2 >> 16) & 0xff] & 0x00ff0000) ^ (Te0_ENC[(t3 >> 8) & 0xff] & 0x0000ff00) ^ (Te1_ENC[t0 & 0xff] & 0x000000ff) ^ W[49];
+        s2 = (Te2_ENC[t2 >> 24] & 0xff000000) ^ (Te3_ENC[(t3 >> 16) & 0xff] & 0x00ff0000) ^ (Te0_ENC[(t0 >> 8) & 0xff] & 0x0000ff00) ^ (Te1_ENC[t1 & 0xff] & 0x000000ff) ^ W[50];
+        s3 = (Te2_ENC[t3 >> 24] & 0xff000000) ^ (Te3_ENC[(t0 >> 16) & 0xff] & 0x00ff0000) ^ (Te0_ENC[(t1 >> 8) & 0xff] & 0x0000ff00) ^ (Te1_ENC[t2 & 0xff] & 0x000000ff) ^ W[51];
     }
     else if(Nr == 14)
     {
         // 9 Round
-        t0 = Te0[s0 >> 24] ^ Te1[(s1 >> 16) & 0xff] ^ Te2[(s2 >> 8) & 0xff] ^ Te3[s3 & 0xff] ^ W[36];
-        t1 = Te0[s1 >> 24] ^ Te1[(s2 >> 16) & 0xff] ^ Te2[(s3 >> 8) & 0xff] ^ Te3[s0 & 0xff] ^ W[37];
-        t2 = Te0[s2 >> 24] ^ Te1[(s3 >> 16) & 0xff] ^ Te2[(s0 >> 8) & 0xff] ^ Te3[s1 & 0xff] ^ W[38];
-        t3 = Te0[s3 >> 24] ^ Te1[(s0 >> 16) & 0xff] ^ Te2[(s1 >> 8) & 0xff] ^ Te3[s2 & 0xff] ^ W[39];
+        t0 = Te0_ENC[s0 >> 24] ^ Te1_ENC[(s1 >> 16) & 0xff] ^ Te2_ENC[(s2 >> 8) & 0xff] ^ Te3_ENC[s3 & 0xff] ^ W[36];
+        t1 = Te0_ENC[s1 >> 24] ^ Te1_ENC[(s2 >> 16) & 0xff] ^ Te2_ENC[(s3 >> 8) & 0xff] ^ Te3_ENC[s0 & 0xff] ^ W[37];
+        t2 = Te0_ENC[s2 >> 24] ^ Te1_ENC[(s3 >> 16) & 0xff] ^ Te2_ENC[(s0 >> 8) & 0xff] ^ Te3_ENC[s1 & 0xff] ^ W[38];
+        t3 = Te0_ENC[s3 >> 24] ^ Te1_ENC[(s0 >> 16) & 0xff] ^ Te2_ENC[(s1 >> 8) & 0xff] ^ Te3_ENC[s2 & 0xff] ^ W[39];
 
         // 10 Round
-        s0 = Te0[t0 >> 24] ^ Te1[(t1 >> 16) & 0xff] ^ Te2[(t2 >> 8) & 0xff] ^ Te3[t3 & 0xff] ^ W[40];
-        s1 = Te0[t1 >> 24] ^ Te1[(t2 >> 16) & 0xff] ^ Te2[(t3 >> 8) & 0xff] ^ Te3[t0 & 0xff] ^ W[41];
-        s2 = Te0[t2 >> 24] ^ Te1[(t3 >> 16) & 0xff] ^ Te2[(t0 >> 8) & 0xff] ^ Te3[t1 & 0xff] ^ W[42];
-        s3 = Te0[t3 >> 24] ^ Te1[(t0 >> 16) & 0xff] ^ Te2[(t1 >> 8) & 0xff] ^ Te3[t2 & 0xff] ^ W[43];
+        s0 = Te0_ENC[t0 >> 24] ^ Te1_ENC[(t1 >> 16) & 0xff] ^ Te2_ENC[(t2 >> 8) & 0xff] ^ Te3_ENC[t3 & 0xff] ^ W[40];
+        s1 = Te0_ENC[t1 >> 24] ^ Te1_ENC[(t2 >> 16) & 0xff] ^ Te2_ENC[(t3 >> 8) & 0xff] ^ Te3_ENC[t0 & 0xff] ^ W[41];
+        s2 = Te0_ENC[t2 >> 24] ^ Te1_ENC[(t3 >> 16) & 0xff] ^ Te2_ENC[(t0 >> 8) & 0xff] ^ Te3_ENC[t1 & 0xff] ^ W[42];
+        s3 = Te0_ENC[t3 >> 24] ^ Te1_ENC[(t0 >> 16) & 0xff] ^ Te2_ENC[(t1 >> 8) & 0xff] ^ Te3_ENC[t2 & 0xff] ^ W[43];
 
         // 11 Round
-        t0 = Te0[s0 >> 24] ^ Te1[(s1 >> 16) & 0xff] ^ Te2[(s2 >> 8) & 0xff] ^ Te3[s3 & 0xff] ^ W[44];
-        t1 = Te0[s1 >> 24] ^ Te1[(s2 >> 16) & 0xff] ^ Te2[(s3 >> 8) & 0xff] ^ Te3[s0 & 0xff] ^ W[45];
-        t2 = Te0[s2 >> 24] ^ Te1[(s3 >> 16) & 0xff] ^ Te2[(s0 >> 8) & 0xff] ^ Te3[s1 & 0xff] ^ W[46];
-        t3 = Te0[s3 >> 24] ^ Te1[(s0 >> 16) & 0xff] ^ Te2[(s1 >> 8) & 0xff] ^ Te3[s2 & 0xff] ^ W[47];
+        t0 = Te0_ENC[s0 >> 24] ^ Te1_ENC[(s1 >> 16) & 0xff] ^ Te2_ENC[(s2 >> 8) & 0xff] ^ Te3_ENC[s3 & 0xff] ^ W[44];
+        t1 = Te0_ENC[s1 >> 24] ^ Te1_ENC[(s2 >> 16) & 0xff] ^ Te2_ENC[(s3 >> 8) & 0xff] ^ Te3_ENC[s0 & 0xff] ^ W[45];
+        t2 = Te0_ENC[s2 >> 24] ^ Te1_ENC[(s3 >> 16) & 0xff] ^ Te2_ENC[(s0 >> 8) & 0xff] ^ Te3_ENC[s1 & 0xff] ^ W[46];
+        t3 = Te0_ENC[s3 >> 24] ^ Te1_ENC[(s0 >> 16) & 0xff] ^ Te2_ENC[(s1 >> 8) & 0xff] ^ Te3_ENC[s2 & 0xff] ^ W[47];
 
         // 12 Round
-        s0 = Te0[t0 >> 24] ^ Te1[(t1 >> 16) & 0xff] ^ Te2[(t2 >> 8) & 0xff] ^ Te3[t3 & 0xff] ^ W[48];
-        s1 = Te0[t1 >> 24] ^ Te1[(t2 >> 16) & 0xff] ^ Te2[(t3 >> 8) & 0xff] ^ Te3[t0 & 0xff] ^ W[49];
-        s2 = Te0[t2 >> 24] ^ Te1[(t3 >> 16) & 0xff] ^ Te2[(t0 >> 8) & 0xff] ^ Te3[t1 & 0xff] ^ W[50];
-        s3 = Te0[t3 >> 24] ^ Te1[(t0 >> 16) & 0xff] ^ Te2[(t1 >> 8) & 0xff] ^ Te3[t2 & 0xff] ^ W[51];
+        s0 = Te0_ENC[t0 >> 24] ^ Te1_ENC[(t1 >> 16) & 0xff] ^ Te2_ENC[(t2 >> 8) & 0xff] ^ Te3_ENC[t3 & 0xff] ^ W[48];
+        s1 = Te0_ENC[t1 >> 24] ^ Te1_ENC[(t2 >> 16) & 0xff] ^ Te2_ENC[(t3 >> 8) & 0xff] ^ Te3_ENC[t0 & 0xff] ^ W[49];
+        s2 = Te0_ENC[t2 >> 24] ^ Te1_ENC[(t3 >> 16) & 0xff] ^ Te2_ENC[(t0 >> 8) & 0xff] ^ Te3_ENC[t1 & 0xff] ^ W[50];
+        s3 = Te0_ENC[t3 >> 24] ^ Te1_ENC[(t0 >> 16) & 0xff] ^ Te2_ENC[(t1 >> 8) & 0xff] ^ Te3_ENC[t2 & 0xff] ^ W[51];
 
         // 13 Round
-        t0 = Te0[s0 >> 24] ^ Te1[(s1 >> 16) & 0xff] ^ Te2[(s2 >> 8) & 0xff] ^ Te3[s3 & 0xff] ^ W[52];
-        t1 = Te0[s1 >> 24] ^ Te1[(s2 >> 16) & 0xff] ^ Te2[(s3 >> 8) & 0xff] ^ Te3[s0 & 0xff] ^ W[53];
-        t2 = Te0[s2 >> 24] ^ Te1[(s3 >> 16) & 0xff] ^ Te2[(s0 >> 8) & 0xff] ^ Te3[s1 & 0xff] ^ W[54];
-        t3 = Te0[s3 >> 24] ^ Te1[(s0 >> 16) & 0xff] ^ Te2[(s1 >> 8) & 0xff] ^ Te3[s2 & 0xff] ^ W[55];
+        t0 = Te0_ENC[s0 >> 24] ^ Te1_ENC[(s1 >> 16) & 0xff] ^ Te2_ENC[(s2 >> 8) & 0xff] ^ Te3_ENC[s3 & 0xff] ^ W[52];
+        t1 = Te0_ENC[s1 >> 24] ^ Te1_ENC[(s2 >> 16) & 0xff] ^ Te2_ENC[(s3 >> 8) & 0xff] ^ Te3_ENC[s0 & 0xff] ^ W[53];
+        t2 = Te0_ENC[s2 >> 24] ^ Te1_ENC[(s3 >> 16) & 0xff] ^ Te2_ENC[(s0 >> 8) & 0xff] ^ Te3_ENC[s1 & 0xff] ^ W[54];
+        t3 = Te0_ENC[s3 >> 24] ^ Te1_ENC[(s0 >> 16) & 0xff] ^ Te2_ENC[(s1 >> 8) & 0xff] ^ Te3_ENC[s2 & 0xff] ^ W[55];
 
         // 14 Round
-        s0 = (Te2[t0 >> 24] & 0xff000000) ^ (Te3[(t1 >> 16) & 0xff] & 0x00ff0000) ^ (Te0[(t2 >> 8) & 0xff] & 0x0000ff00) ^ (Te1[t3 & 0xff] & 0x000000ff) ^ W[56];
-        s1 = (Te2[t1 >> 24] & 0xff000000) ^ (Te3[(t2 >> 16) & 0xff] & 0x00ff0000) ^ (Te0[(t3 >> 8) & 0xff] & 0x0000ff00) ^ (Te1[t0 & 0xff] & 0x000000ff) ^ W[57];
-        s2 = (Te2[t2 >> 24] & 0xff000000) ^ (Te3[(t3 >> 16) & 0xff] & 0x00ff0000) ^ (Te0[(t0 >> 8) & 0xff] & 0x0000ff00) ^ (Te1[t1 & 0xff] & 0x000000ff) ^ W[58];
-        s3 = (Te2[t3 >> 24] & 0xff000000) ^ (Te3[(t0 >> 16) & 0xff] & 0x00ff0000) ^ (Te0[(t1 >> 8) & 0xff] & 0x0000ff00) ^ (Te1[t2 & 0xff] & 0x000000ff) ^ W[59];
+        s0 = (Te2_ENC[t0 >> 24] & 0xff000000) ^ (Te3_ENC[(t1 >> 16) & 0xff] & 0x00ff0000) ^ (Te0_ENC[(t2 >> 8) & 0xff] & 0x0000ff00) ^ (Te1_ENC[t3 & 0xff] & 0x000000ff) ^ W[56];
+        s1 = (Te2_ENC[t1 >> 24] & 0xff000000) ^ (Te3_ENC[(t2 >> 16) & 0xff] & 0x00ff0000) ^ (Te0_ENC[(t3 >> 8) & 0xff] & 0x0000ff00) ^ (Te1_ENC[t0 & 0xff] & 0x000000ff) ^ W[57];
+        s2 = (Te2_ENC[t2 >> 24] & 0xff000000) ^ (Te3_ENC[(t3 >> 16) & 0xff] & 0x00ff0000) ^ (Te0_ENC[(t0 >> 8) & 0xff] & 0x0000ff00) ^ (Te1_ENC[t1 & 0xff] & 0x000000ff) ^ W[58];
+        s3 = (Te2_ENC[t3 >> 24] & 0xff000000) ^ (Te3_ENC[(t0 >> 16) & 0xff] & 0x00ff0000) ^ (Te0_ENC[(t1 >> 8) & 0xff] & 0x0000ff00) ^ (Te1_ENC[t2 & 0xff] & 0x000000ff) ^ W[59];
     }
     
     u4byte_out(CT, s0);
@@ -643,7 +643,7 @@ int main()
     printf("\n");
 
     u32 temp;
-    printf("u32 Te0[256]={\n");
+    printf("u32 Te0_ENC[256]={\n");
     for(int i = 0 ; i < 256 ; i++)
     {
         temp = Sbox[i];
@@ -651,7 +651,7 @@ int main()
         if( i % 8 == 7 ) printf("\n");
     }
 
-    printf("u32 Te1[256]={\n");
+    printf("u32 Te1_ENC[256]={\n");
     for(int i = 0 ; i < 256 ; i++)
     {
         temp = Sbox[i];
@@ -659,7 +659,7 @@ int main()
         if( i % 8 == 7 ) printf("\n");
     }
 
-    printf("u32 Te2[256]={\n");
+    printf("u32 Te2_ENC[256]={\n");
     for(int i = 0 ; i < 256 ; i++)
     {
         temp = Sbox[i];
@@ -667,7 +667,7 @@ int main()
         if( i % 8 == 7 ) printf("\n");
     }
     
-    printf("u32 Te3[256]={\n");
+    printf("u32 Te3_ENC[256]={\n");
     for(int i = 0 ; i < 256 ; i++)
     {
         temp = Sbox[i];

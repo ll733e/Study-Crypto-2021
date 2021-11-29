@@ -1,1 +1,2 @@
-    AES_ENC(EO, RK, temp, keysize);
+ 5, 6, 4, 6, 7, 6, 5};
+    float Y[10] = {2, 3, 6,
