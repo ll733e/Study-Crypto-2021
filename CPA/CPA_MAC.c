@@ -4,9 +4,9 @@
 #include <math.h>
 #include <time.h>
 
-#define _FOLD_ "" // 파일 경로
-#define TraceFN "AES.traces" // 대상 파일 이름
-#define AlignedTraceFN "AlignedAES.traces" // 새로 만들어질 파일 이름
+#define MAC_FILE "AES.traces" // 대상 파일 이름
+#define MAC_DIR "/Users/louxsoen/Documents/Univ/부채널연구/현대암호/전력분석 수업 실습자료/" // 파일 경로
+#define MAC_NEW "NEWAES.traces" // 새로 만들어진 파일 이름
 
 double cov(float *x, float *y, int size)
 {
@@ -34,7 +34,6 @@ double corr(float *x, float *y, int size)
     }
     return ((double)size*Sxy - Sx * Sy) /sqrt(((double)size * Sxx - Sx * Sx)*((double)size * Syy - Sy* Sy));
 }
-
 void subalign(float *data1, float *data2, int windowsize, int stepsize, int threshold, int TraceLength)
 {
     // data 배열에 저장되어 잇는 전력 파형을 기준으로 data1 배열에 저장되어 있는 전력파혀을 정렬
@@ -43,11 +42,13 @@ void subalign(float *data1, float *data2, int windowsize, int stepsize, int thre
     double covval, maxcov;
     for(m = 0 ; m < (TraceLength - windowsize) ; m+= stepsize)
     {
-        for(j = threshold ; j < threshold ; j++)
+        maxcovpos = 0;
+        maxcov = 0;
+        for(j = -threshold ; j < threshold ; j++)
         {
             maxcovpos = 0;
             maxcov = 0;
-            if(j < 0)
+             if(j < 0)
             {
                 x = data1 + m;
                 y = data2 + m - j;
@@ -65,19 +66,19 @@ void subalign(float *data1, float *data2, int windowsize, int stepsize, int thre
                 maxcovpos = j;
                 maxcov = covval;
             }
-            if(maxcovpos < 0)
+        }
+        if(maxcovpos < 0)
+        {
+            for(k = m ; k < TraceLength + maxcovpos ; k++)
             {
-                for(k = m ; k < TraceLength + maxcovpos ; k++)
-                {
-                    data2[k] = data2[k - maxcovpos];
-                }
+                data2[k] = data2[k - maxcovpos];
             }
-            else
+        }
+        else
+        {
+            for(k = (TraceLength - maxcovpos - 1) ; k >= m ; k--)
             {
-                for(k = (TraceLength - maxcovpos - 1) ; k >= m ; k--)
-                {
-                    data2[k + maxcovpos] = data2[k];
-                }
+                data2[k + maxcovpos] = data2[k];
             }
         }
     }
@@ -90,38 +91,42 @@ void Alignment()
     int threshold = 100; // 좌우로 얼마나 흔들면서 cov 값을 계산해서 최대값과 이동할 포인트 수를 계산
     int err, TraceLength, TraceNum, i;
     char buf[256];
-    FILE *rfp, *wfp;
+    FILE *DIRR, *DIRW;
     float *data, *data1;
 
-    sprintf_s(buf, 256 * sizeof(char), "%s%s", _FOLD_, TraceFN);
-    if((err = fopen_s(&rfp, buf, "rb")))
+    sprintf(buf, "%s%s", MAC_DIR, MAC_FILE);
+    DIRR = fopen(MAC_FILE, "rb");
+    if(DIRR == NULL)
     {
-        printf("File Open Error!\n");
+        printf("File Open Error! (RB PROBLEM)\n");
     }
-    sprintf_s(buf, 256 * sizeof(char), "%s%s", _FOLD_, AlignedTraceFN);
-    if((err = fopen_s(&wfp, buf, "wb")))
+    sprintf(buf, "%s%s", MAC_DIR, MAC_NEW);
+    DIRW = fopen(MAC_FILE, "wb");
+    if(DIRW == NULL)
     {
-        printf("File Open Error!\n");
+        printf("File Open Error! (WB PROBLEM)\n");
     }
-    fread(&TraceLength, sizeof(int), 1, rfp);
-    fwrite(&TraceLength, sizeof(int), 1, wfp);
-    fread(&TraceNum, sizeof(int), 1, rfp);
-    fwrite(&TraceNum, sizeof(int), 1, wfp);
+
+    fread(&TraceLength, sizeof(int), 1, DIRR);
+    fwrite(&TraceLength, sizeof(int), 1, DIRW);
+    fread(&TraceNum, sizeof(int), 1, DIRR);
+    fwrite(&TraceNum, sizeof(int), 1, DIRW);
 
     data = (float*)calloc(TraceLength, sizeof(float));
     data1 = (float*)calloc(TraceLength, sizeof(float));
 
-    fread(&data, sizeof(float), TraceLength, rfp);
-    fwrite(&data, sizeof(float), TraceLength, wfp);
+    fread(&data, sizeof(float), TraceLength, DIRR);
+    fwrite(&data, sizeof(float), TraceLength, DIRW);
+    /*
     for(i = 1 ; i < TraceNum ; i++)
     {
-        fread(data1, sizeof(float), TraceLength, rfp);
+        fread(data1, sizeof(float), TraceLength, DIRR);
         subalign(data, data1, windowsize, stepsize, threshold, TraceLength);
-        fwrite(data1, sizeof(float), TraceLength, wfp);
-    }
+        fwrite(data1, sizeof(float), TraceLength, DIRW);
+    }*/
 
-    fclose(rfp);
-    fclose(wfp);
+    fclose(DIRR);
+    fclose(DIRW);
 
     free(data);
     free(data1);
@@ -129,9 +134,10 @@ void Alignment()
 
 int main()
 {
+    Alignment();
+}
+    /*
     float X[10] = {1, 2, 3, 5, 6, 4, 6, 7, 6, 5};
     float Y[10] = {2, 3, 6, 8, 10, 7, 11, 12, 11, 9};
     printf("%lf, %lf", cov(X,Y,10), corr(X,Y,10));
-    
-    Alignment();
-}
+    */

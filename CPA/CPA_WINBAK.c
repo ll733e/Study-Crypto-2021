@@ -4,7 +4,7 @@
 #include <math.h>
 #include <time.h>
 
-#define _FOLD_ "\\vmware-host\\Shared Folders\\데스크탑\\CPA" // 파일 경로
+#define _FOLD_ "" // 파일 경로
 #define TraceFN "AES.traces" // 대상 파일 이름
 #define AlignedTraceFN "AlignedAES.traces" // 새로 만들어질 파일 이름
 
@@ -34,7 +34,6 @@ double corr(float *x, float *y, int size)
     }
     return ((double)size*Sxy - Sx * Sy) /sqrt(((double)size * Sxx - Sx * Sx)*((double)size * Syy - Sy* Sy));
 }
-
 void subalign(float *data1, float *data2, int windowsize, int stepsize, int threshold, int TraceLength)
 {
     // data 배열에 저장되어 잇는 전력 파형을 기준으로 data1 배열에 저장되어 있는 전력파혀을 정렬
@@ -43,11 +42,13 @@ void subalign(float *data1, float *data2, int windowsize, int stepsize, int thre
     double covval, maxcov;
     for(m = 0 ; m < (TraceLength - windowsize) ; m+= stepsize)
     {
-        for(j = threshold ; j < threshold ; j++)
+        maxcovpos = 0;
+        maxcov = 0;
+        for(j = -threshold ; j < threshold ; j++)
         {
             maxcovpos = 0;
             maxcov = 0;
-            if(j < 0)
+             if(j < 0)
             {
                 x = data1 + m;
                 y = data2 + m - j;
@@ -65,19 +66,19 @@ void subalign(float *data1, float *data2, int windowsize, int stepsize, int thre
                 maxcovpos = j;
                 maxcov = covval;
             }
-            if(maxcovpos < 0)
+        }
+        if(maxcovpos < 0)
+        {
+            for(k = m ; k < TraceLength + maxcovpos ; k++)
             {
-                for(k = m ; k < TraceLength + maxcovpos ; k++)
-                {
-                    data2[k] = data2[k - maxcovpos];
-                }
+                data2[k] = data2[k - maxcovpos];
             }
-            else
+        }
+        else
+        {
+            for(k = (TraceLength - maxcovpos - 1) ; k >= m ; k--)
             {
-                for(k = (TraceLength - maxcovpos - 1) ; k >= m ; k--)
-                {
-                    data2[k + maxcovpos] = data2[k];
-                }
+                data2[k + maxcovpos] = data2[k];
             }
         }
     }
