@@ -4,7 +4,7 @@
 #include <math.h>
 #include <time.h>
 
-#define _FOLD_ "\\vmware-host\\Shared Folders\\데스크탑\\CPA" // 파일 경로
+#define _FOLD_ "" // 파일 경로
 #define TraceFN "AES.traces" // 대상 파일 이름
 #define AlignedTraceFN "AlignedAES.traces" // 새로 만들어질 파일 이름
 
@@ -43,7 +43,7 @@ void subalign(float *data1, float *data2, int windowsize, int stepsize, int thre
     double covval, maxcov;
     for(m = 0 ; m < (TraceLength - windowsize) ; m+= stepsize)
     {
-        for(j =- threshold ; j < threshold ; j++)
+        for(j = threshold ; j < threshold ; j++)
         {
             maxcovpos = 0;
             maxcov = 0;

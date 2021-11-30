@@ -1,13 +1,15 @@
 #include <stdio.h>
-#include<memory.h>
-#include<string.h>
+#include <memory.h>
+#include <string.h>
 
-#define _FILE_ "/Users/louxsoen/P/myfile.txt"
+#define DIR "/Users/louxsoen/P/lab_aes/hello"
+#define _FILE_ "myfile.txt"
 int main()
 {
     FILE *a;
     char buf[256];
-    a = fopen(_FILE_, "r");
+    
+    a = fopen(DIR, "r");
     
     if(a == NULL)
     {
