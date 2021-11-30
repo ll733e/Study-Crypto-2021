@@ -4,9 +4,9 @@
 #include <math.h>
 #include <time.h>
 
-#define MAC_FILE "AES.traces" // 대상 파일 이름
+#define MAC_FILE "TEST.traces" // 대상 파일 이름
 #define MAC_DIR "/Users/louxsoen/Documents/Univ/부채널연구/현대암호/전력분석 수업 실습자료/" // 파일 경로
-#define MAC_NEW "NEWAES.traces" // 새로 만들어진 파일 이름
+#define MAC_NEW "REVISE.traces" // 새로 만들어진 파일 이름
 
 double cov(float *x, float *y, int size)
 {
@@ -46,8 +46,6 @@ void subalign(float *data1, float *data2, int windowsize, int stepsize, int thre
         maxcov = 0;
         for(j = -threshold ; j < threshold ; j++)
         {
-            maxcovpos = 0;
-            maxcov = 0;
              if(j < 0)
             {
                 x = data1 + m;
@@ -100,13 +98,11 @@ void Alignment()
     {
         printf("File Open Error! (RB PROBLEM)\n");
     }
-    sprintf(buf, "%s%s", MAC_DIR, MAC_NEW);
-    DIRW = fopen(MAC_FILE, "wb");
+    DIRW = fopen(MAC_NEW, "wb");
     if(DIRW == NULL)
     {
         printf("File Open Error! (WB PROBLEM)\n");
     }
-
     fread(&TraceLength, sizeof(int), 1, DIRR);
     fwrite(&TraceLength, sizeof(int), 1, DIRW);
     fread(&TraceNum, sizeof(int), 1, DIRR);
@@ -115,15 +111,17 @@ void Alignment()
     data = (float*)calloc(TraceLength, sizeof(float));
     data1 = (float*)calloc(TraceLength, sizeof(float));
 
-    fread(&data, sizeof(float), TraceLength, DIRR);
-    fwrite(&data, sizeof(float), TraceLength, DIRW);
-    /*
+    fread(data, sizeof(float), TraceLength, DIRR);
+    fwrite(data, sizeof(float), TraceLength, DIRW);
+
     for(i = 1 ; i < TraceNum ; i++)
     {
         fread(data1, sizeof(float), TraceLength, DIRR);
         subalign(data, data1, windowsize, stepsize, threshold, TraceLength);
         fwrite(data1, sizeof(float), TraceLength, DIRW);
-    }*/
+    }
+
+    sprintf(buf, "%s%s", MAC_DIR, MAC_NEW);
 
     fclose(DIRR);
     fclose(DIRW);
