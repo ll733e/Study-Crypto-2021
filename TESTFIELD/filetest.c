@@ -2,7 +2,15 @@
 #include <memory.h>
 #include <string.h>
 
-#define DIR "/Users/louxsoen/Desktop/hello/myfile.txt"
+
+#define MAC_FILE "TEST.traces" // 대상 파일 이름
+#define MAC_DIR "/Users/louxsoen/Documents/Univ/부채널연구/현대암호/전력분석 수업 실습자료/" // 파일 경로
+#define MAC_NEW "REVISE.traces" // 새로 만들어진 파일 이름
+#define PlaintextFN "plaintext.txt"
+#define CiphertextFN "ciphertext.txt"
+#define startpoint 22550
+#define endpoint 31050
+
 int main()
 {
     FILE *a;
