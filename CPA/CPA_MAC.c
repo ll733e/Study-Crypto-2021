@@ -234,15 +234,15 @@ void CPA()
     for(i = 0 ; i < 16 ; i++)
     {
         max = 0;
-        maxkey = 0;
-        for(key = 0 ; key < 256 ; k++)
+        maxkey = 0; 
+        for(key = 0 ; key < 256 ; key++)
         {
             Sy = 0;
             Syy = 0;
             memset(Sxy, 0, sizeof(double)*TraceLength);
             for(j = 0 ; j < TraceNum ; j++)
             {
-                iv = SBOX[plaintext[j][i]^key];
+                iv = SBOX[plaintext[j][i] ^ key];
                 hw_iv = 0;
                 for(k = 0 ; k < 8 ; k++) hw_iv += ((iv >> k) & 1);
                 Sy += hw_iv;
@@ -254,7 +254,7 @@ void CPA()
             }
             for(k = startpoint ; k < endpoint ; k++)
             {
-                corrT[k] += (double)TraceNum * Sxy[k] - Sx[k] * Sy / sqrt(((double)TraceNum * Sxx[k] - Sx[k] * Sx[k]) * ((double)TraceNum * Sy * Sy));
+                corrT[k] += ((double)TraceNum * Sxy[k] - Sx[k] * Sy) / sqrt(((double)TraceNum * Sxx[k] - Sx[k] * Sx[k]) * ((double)TraceNum * Sy * Sy));
                 if(fabs(corrT[k]) > max)
                 {
                     maxkey = key;
@@ -269,7 +269,7 @@ void CPA()
             }
             fwrite(corrT, sizeof(double), TraceLength, DIRW);
             fclose(DIRW);
-            printf(".");
+            puts("");
         }
         printf("%02dth_block : maxkey(%02x), maxcorr(%lf)\n", i, maxkey, max);
     }
