@@ -9,7 +9,7 @@
 #define MAC_NEW "REVISE.traces" // 새로 만들어진 파일 이름
 #define PlaintextFN "plaintext.txt"
 #define CiphertextFN "ciphertext.txt"
-#define startpoint 22550
+#define startpoint 22551
 #define endpoint 31050
 
 static unsigned char SBOX[256] = 
@@ -160,13 +160,13 @@ void CPA()
     unsigned char x, y, iv, hw_iv;
     char temp[34];
     float **data; // 정렬된 파형을 한번에 메모리에 올려서 작업
-    double *Sx, *Sxx, *Sxy, *corrT;
+    double *Sx, *Sxx, *Sxy, *corrT, a, b, c;
     double Sy, Syy, max;
     char buf[256];
     int TraceLength, TraceNum, i, j, k, key, maxkey;
     FILE *DIRR, *DIRW;
     
-    sprintf(buf, "%s%s", MAC_DIR, MAC_FILE);
+    sprintf(buf, "%s%s", MAC_DIR, MAC_NEW);
     DIRR = fopen(buf, "rb");
     if(DIRR == NULL)
     {
@@ -192,6 +192,7 @@ void CPA()
     {
         printf("File Open Error! (Plaintext)\n");
     }
+
     plaintext = (unsigned char**)calloc(TraceNum, sizeof(unsigned char*));
 
     for(i = 0 ; i < TraceNum ; i++)
@@ -201,8 +202,7 @@ void CPA()
 
     for(i = 0 ; i < TraceNum ; i++)
     {
-        printf(",");
-        fgets(temp, 34, DIRR); // --> 16bytes로 바꿔서 Plaintext[i]에 저장 필요
+        fread(temp, sizeof(char), 34, DIRR); // --> 16bytes로 바꿔서 Plaintext[i]에 저장 필요
         for(j = 0 ; j < 16 ; j++)
         {
             x = temp[2 * j];
@@ -254,7 +254,11 @@ void CPA()
             }
             for(k = startpoint ; k < endpoint ; k++)
             {
-                corrT[k] += ((double)TraceNum * Sxy[k] - Sx[k] * Sy) / sqrt(((double)TraceNum * Sxx[k] - Sx[k] * Sx[k]) * ((double)TraceNum * Sy * Sy));
+                a = ((double)TraceNum * Sxy[k] - Sx[k] * Sy);
+                b = sqrt(((double)TraceNum * Sxx[k] - Sx[k] * Sx[k]));
+                c = sqrt(((double)TraceNum * Syy - Sy * Sy));
+
+                corrT[k] = a/ (b * c);
                 if(fabs(corrT[k]) > max)
                 {
                     maxkey = key;
@@ -269,7 +273,6 @@ void CPA()
             }
             fwrite(corrT, sizeof(double), TraceLength, DIRW);
             fclose(DIRW);
-            puts("");
         }
         printf("%02dth_block : maxkey(%02x), maxcorr(%lf)\n", i, maxkey, max);
     }
