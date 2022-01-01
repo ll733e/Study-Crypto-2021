@@ -92,7 +92,7 @@ void subalign(float *data1, float *data2, int windowsize, int stepsize, int thre
         }
         if(maxcovpos < 0)
         {
-            for(k = m ; k < TraceLength + maxcovpos ; k++)
+            for(k = m ; k < (TraceLength + maxcovpos) ; k++)
             {
                 data2[k] = data2[k - maxcovpos];
             }
@@ -252,12 +252,11 @@ void CPA()
                     Sxy[k] += hw_iv * data[j][k];
                 }
             }
+            a = ((double)TraceNum * Sxy[k] - Sx[k] * Sy);
+            b = sqrt(((double)TraceNum * Sxx[k] - Sx[k] * Sx[k]));
+            c = sqrt(((double)TraceNum * Syy - Sy * Sy));
             for(k = startpoint ; k < endpoint ; k++)
             {
-                a = ((double)TraceNum * Sxy[k] - Sx[k] * Sy);
-                b = sqrt(((double)TraceNum * Sxx[k] - Sx[k] * Sx[k]));
-                c = sqrt(((double)TraceNum * Syy - Sy * Sy));
-
                 corrT[k] = a/ (b * c);
                 if(fabs(corrT[k]) > max)
                 {
@@ -286,6 +285,7 @@ void CPA()
 
 int main()
 {
+    //Alignment();
     CPA();
 }
     /*
