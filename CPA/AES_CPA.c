@@ -259,6 +259,7 @@ void CPA()
                 c = sqrt(((double)TraceNum * Syy - Sy * Sy));
 
                 corrT[k] = a/ (b * c);
+                printf("%lf %lf %lf\n", a, b, c);
                 if(fabs(corrT[k]) > max)
                 {
                     maxkey = key;
